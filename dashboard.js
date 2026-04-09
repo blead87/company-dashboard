@@ -18,15 +18,28 @@ const PRIORITIES = {
 let todos = [];
 let lastSyncTime = new Date();
 let hideCompleted = false;
+let syncInProgress = false;
+let githubToken = null;
+const REPO_OWNER = 'blead87';
+const REPO_NAME = 'company-dashboard';
+const TODOS_FILE_PATH = 'todos.json';
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     loadTodos();
     setupEventListeners();
     updateLastSync();
+    loadGitHubTokenToUI();
     
     // Auto-refresh every 5 minutes
     setInterval(loadTodos, 5 * 60 * 1000);
+    
+    // Auto-sync on startup if token is set
+    setTimeout(() => {
+        if (getGitHubToken()) {
+            syncWithGitHub();
+        }
+    }, 2000);
 });
 
 // Load todos from GitHub (or local storage as fallback)
@@ -59,7 +72,7 @@ async function loadTodos() {
     updateStats();
 }
 
-// Save todos (to local storage, GitHub via manual sync)
+// Save todos (to local storage, auto-push to GitHub if token set)
 function saveTodos() {
     // Save to local storage
     localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
@@ -68,9 +81,14 @@ function saveTodos() {
     lastSyncTime = new Date();
     updateLastSync();
     
-    // Note: GitHub sync would require GitHub API with authentication
-    // For now, we'll use local storage and manual GitHub updates
-    console.log('Todos saved locally. Use "Sync to GitHub" button to push to repo.');
+    // Auto-push to GitHub if token is set
+    if (getGitHubToken()) {
+        // Debounce: wait 1 second before pushing to avoid rapid API calls
+        clearTimeout(window.saveTimeout);
+        window.saveTimeout = setTimeout(() => {
+            pushToGitHub();
+        }, 1000);
+    }
 }
 
 // Render todos for all tabs
@@ -314,6 +332,33 @@ function updateLastSync() {
     }
 }
 
+// GitHub Token Functions
+
+// Save GitHub token from input
+function saveGitHubToken() {
+    const tokenInput = document.getElementById('github-token');
+    if (tokenInput && tokenInput.value.trim()) {
+        setGitHubToken(tokenInput.value.trim());
+        tokenInput.value = ''; // Clear for security
+        showSyncStatus('✅ GitHub token saved', 'success');
+        
+        // Auto-sync after saving token
+        setTimeout(() => syncWithGitHub(), 1000);
+    } else {
+        showSyncStatus('⚠️ Please enter a token', 'warning');
+    }
+}
+
+// Load saved token into input (masked)
+function loadGitHubTokenToUI() {
+    const token = getGitHubToken();
+    const tokenInput = document.getElementById('github-token');
+    if (tokenInput && token) {
+        tokenInput.value = '••••••••••••••••••••'; // Masked display
+        tokenInput.placeholder = 'Token saved (click Sync Now)'; 
+    }
+}
+
 // Toggle hide completed filter
 function toggleHideCompleted() {
     hideCompleted = !hideCompleted;
@@ -461,7 +506,202 @@ function loadSampleData() {
     alert('Sample data loaded!');
 }
 
+// GitHub API Sync Functions
+
+// Get GitHub token from user or local storage
+function getGitHubToken() {
+    if (githubToken) return githubToken;
+    
+    // Check local storage
+    const savedToken = localStorage.getItem('company-dashboard-github-token');
+    if (savedToken) {
+        githubToken = savedToken;
+        return githubToken;
+    }
+    
+    return null;
+}
+
+// Set GitHub token
+function setGitHubToken(token) {
+    githubToken = token;
+    localStorage.setItem('company-dashboard-github-token', token);
+    console.log('GitHub token saved');
+}
+
+// Get file SHA (needed for updates)
+async function getFileSha() {
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
+            {
+                headers: {
+                    'Authorization': `token ${getGitHubToken()}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.sha;
+        } else if (response.status === 404) {
+            // File doesn't exist yet
+            return null;
+        }
+    } catch (error) {
+        console.error('Error getting file SHA:', error);
+    }
+    return null;
+}
+
+// Push todos to GitHub
+async function pushToGitHub() {
+    if (syncInProgress) return;
+    if (!getGitHubToken()) return;
+    
+    syncInProgress = true;
+    
+    try {
+        const sha = await getFileSha();
+        const content = btoa(JSON.stringify(todos, null, 2));
+        
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${getGitHubToken()}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Auto-sync: ${new Date().toLocaleString()}`,
+                    content: content,
+                    sha: sha
+                })
+            }
+        );
+        
+        if (response.ok) {
+            console.log('Successfully pushed to GitHub');
+            lastSyncTime = new Date();
+            updateLastSync();
+            showSyncStatus('✅ Synced to GitHub', 'success');
+        } else {
+            const error = await response.json();
+            console.error('GitHub push failed:', error);
+            showSyncStatus('❌ Sync failed', 'danger');
+        }
+    } catch (error) {
+        console.error('Error pushing to GitHub:', error);
+        showSyncStatus('❌ Sync error', 'danger');
+    } finally {
+        syncInProgress = false;
+    }
+}
+
+// Pull todos from GitHub
+async function pullFromGitHub() {
+    if (syncInProgress) return;
+    if (!getGitHubToken()) return;
+    
+    syncInProgress = true;
+    
+    try {
+        const response = await fetch(
+            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${TODOS_FILE_PATH}`,
+            {
+                headers: {
+                    'Authorization': `token ${getGitHubToken()}`,
+                    'Accept': 'application/vnd.github.v3.raw'
+                }
+            }
+        );
+        
+        if (response.ok) {
+            const remoteTodos = await response.json();
+            
+            // Simple conflict resolution: remote wins if newer
+            // In a real app, you'd want more sophisticated merging
+            todos = remoteTodos;
+            saveTodos(); // Save to local storage
+            
+            console.log('Successfully pulled from GitHub');
+            lastSyncTime = new Date();
+            updateLastSync();
+            renderTodos();
+            updateStats();
+            showSyncStatus('✅ Synced from GitHub', 'success');
+        } else {
+            console.error('GitHub pull failed:', response.status);
+            showSyncStatus('❌ Sync failed', 'danger');
+        }
+    } catch (error) {
+        console.error('Error pulling from GitHub:', error);
+        showSyncStatus('❌ Sync error', 'danger');
+    } finally {
+        syncInProgress = false;
+    }
+}
+
+// Two-way sync
+async function syncWithGitHub() {
+    if (!getGitHubToken()) {
+        showSyncStatus('⚠️ Set GitHub token to enable sync', 'warning');
+        return;
+    }
+    
+    // First pull, then push (simple strategy)
+    await pullFromGitHub();
+    await pushToGitHub();
+}
+
+// Show sync status message
+function showSyncStatus(message, type = 'info') {
+    // Create or update status element
+    let statusEl = document.getElementById('sync-status');
+    if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.id = 'sync-status';
+        statusEl.className = 'alert alert-dismissible fade show';
+        statusEl.style.position = 'fixed';
+        statusEl.style.top = '70px';
+        statusEl.style.right = '20px';
+        statusEl.style.zIndex = '1000';
+        statusEl.style.maxWidth = '300px';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'btn-close';
+        closeBtn.setAttribute('data-bs-dismiss', 'alert');
+        statusEl.appendChild(closeBtn);
+        
+        document.body.appendChild(statusEl);
+    }
+    
+    statusEl.className = `alert alert-${type} alert-dismissible fade show`;
+    statusEl.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        if (statusEl && statusEl.parentNode) {
+            statusEl.remove();
+        }
+    }, 3000);
+}
+
 // Initialize with some sample data if empty
 if (!localStorage.getItem('company-dashboard-todos')) {
     setTimeout(loadSampleData, 1000);
 }
+
+// Auto-sync every 2 minutes if token is set
+setInterval(() => {
+    if (getGitHubToken()) {
+        syncWithGitHub();
+    }
+}, 2 * 60 * 1000);

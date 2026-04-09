@@ -4,9 +4,9 @@
     "description": "Check LinkedIn Post 4 performance",
     "company": "oorban",
     "priority": "high",
-    "dueDate": "2026-04-08",
+    "dueDate": "2026-04-09",
     "notes": "Narrative format only, no CTA",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -15,8 +15,8 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta BergantÃ­n, Palma Real, Naves Comerciales Escar",
-    "status": "pending",
+    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -26,7 +26,7 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "YES/NO on 4-6 week build",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -46,16 +46,16 @@
     "priority": "medium",
     "dueDate": "2026-04-09",
     "notes": "3pm AST",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
-    "id": "6",
-    "description": "Accountant Meeting with Omayra Cruz",
+    "id": "1775775402541",
+    "description": "Llamar a Edward para arreglo de maquina",
     "company": "legnofino",
     "priority": "high",
-    "dueDate": "2026-04-09",
-    "notes": "6pm AST - Review qualifications, discuss scope, compensation",
+    "dueDate": "2026-04-10",
+    "notes": "",
     "status": "pending",
     "createdAt": "2026-04-09"
   }

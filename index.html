@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - Nelson's Ventures</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --oorban: #4a6fa5;
+            --mfc: #6b8e23;
+            --legnofino: #d2691e;
+            --penalma: #8b4513;
+            --personal: #6a5acd;
+        }
+        .company-oorban { border-left: 4px solid var(--oorban); }
+        .company-mfc { border-left: 4px solid var(--mfc); }
+        .company-legnofino { border-left: 4px solid var(--legnofino); }
+        .company-penalma { border-left: 4px solid var(--penalma); }
+        .company-personal { border-left: 4px solid var(--personal); }
+        .priority-high { background-color: #ffe6e6; }
+        .priority-medium { background-color: #fff3cd; }
+        .priority-low { background-color: #e7f4e4; }
+        .status-done { opacity: 0.6; text-decoration: line-through; }
+        .todo-item { transition: all 0.2s; }
+        .todo-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .company-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-oorban { background-color: var(--oorban); color: white; }
+        .badge-mfc { background-color: var(--mfc); color: white; }
+        .badge-legnofino { background-color: var(--legnofino); color: white; }
+        .badge-penalma { background-color: var(--penalma); color: white; }
+        .badge-personal { background-color: var(--personal); color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-kanban-fill me-2"></i>
+                Company Dashboard
+            </a>
+            <div class="text-light">
+                <small>Last sync: <span id="last-sync">Just now</span></small>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1><i class="bi bi-building me-2"></i>Cross-Company Todo Dashboard</h1>
+                <p class="text-muted">Track tasks across Oorban, MFC Arquitectos, Legnofino, Penalma Capital, and Personal</p>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-2 col-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" id="total-todos">0</h5>
+                        <p class="card-text text-muted">Total Tasks</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" id="pending-todos">0</h5>
+                        <p class="card-text text-muted">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" id="high-priority">0</h5>
+                        <p class="card-text text-muted">High Priority</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title" id="overdue-todos">0</h5>
+                        <p class="card-text text-muted">Overdue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Quick Add</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="quick-task" placeholder="New task...">
+                            <button class="btn btn-primary" onclick="addQuickTask()">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Todo List -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="companyTabs">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#all">All Companies</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#oorban">Oorban</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mfc">MFC</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#legnofino">Legnofino</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#penalma">Penalma</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#personal">Personal</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="all">
+                                <div id="todo-list-all"></div>
+                            </div>
+                            <div class="tab-pane fade" id="oorban">
+                                <div id="todo-list-oorban"></div>
+                            </div>
+                            <div class="tab-pane fade" id="mfc">
+                                <div id="todo-list-mfc"></div>
+                            </div>
+                            <div class="tab-pane fade" id="legnofino">
+                                <div id="todo-list-legnofino"></div>
+                            </div>
+                            <div class="tab-pane fade" id="penalma">
+                                <div id="todo-list-penalma"></div>
+                            </div>
+                            <div class="tab-pane fade" id="personal">
+                                <div id="todo-list-personal"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Todo & Filters -->
+            <div class="col-lg-4">
+                <!-- Add Todo Form -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Add New Task</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="add-todo-form">
+                            <div class="mb-3">
+                                <label class="form-label">Task Description</label>
+                                <textarea class="form-control" id="task-description" rows="2" required></textarea>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Company</label>
+                                    <select class="form-select" id="task-company" required>
+                                        <option value="oorban">Oorban (ROMULENS/PARKEADO)</option>
+                                        <option value="mfc">MFC Arquitectos</option>
+                                        <option value="legnofino">Legnofino</option>
+                                        <option value="penalma">Penalma Capital</option>
+                                        <option value="personal">Personal</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" id="task-priority" required>
+                                        <option value="low">Low</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="high">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Due Date (optional)</label>
+                                <input type="date" class="form-control" id="task-due-date">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Notes (optional)</label>
+                                <textarea class="form-control" id="task-notes" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-save me-2"></i>Add Task
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- System Metrics -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>System Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="system-metrics">
+                            <p class="text-muted">Loading metrics...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="row mt-4">
+            <div class="col">
+                <div class="text-center text-muted">
+                    <small>
+                        Dashboard for Nelson's Ventures | 
+                        <a href="https://github.com/blead87/company-dashboard" target="_blank">
+                            <i class="bi bi-github me-1"></i>GitHub Repo
+                        </a> | 
+                        Auto-sync every 5 minutes
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

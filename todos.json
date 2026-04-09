@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "description": "Check LinkedIn Post 4 performance",
+    "company": "oorban",
+    "priority": "high",
+    "dueDate": "2026-04-08",
+    "notes": "Narrative format only, no CTA",
+    "status": "pending",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "2",
+    "description": "MFC Project Stall Scan",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-09",
+    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "status": "pending",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "3",
+    "description": "Legnofino Platform Decision",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-09",
+    "notes": "YES/NO on 4-6 week build",
+    "status": "pending",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "4",
+    "description": "Define Penalma Q2 2026 Targets",
+    "company": "penalma",
+    "priority": "medium",
+    "dueDate": "2026-04-10",
+    "notes": "ETF contributions, liquidity buffer, deal pipeline",
+    "status": "pending",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "5",
+    "description": "Therapist Appointment",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": "2026-04-09",
+    "notes": "3pm AST",
+    "status": "pending",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "6",
+    "description": "Accountant Meeting with Omayra Cruz",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-09",
+    "notes": "6pm AST - Review qualifications, discuss scope, compensation",
+    "status": "pending",
+    "createdAt": "2026-04-09"
+  }
+]

@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     updateLastSync();
     loadGitHubTokenToUI();
+    initTheme();
+    
+    // Add theme toggle event listener
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
     
     // Auto-refresh every 5 minutes
     setInterval(loadTodos, 5 * 60 * 1000);
@@ -697,6 +704,44 @@ function showSyncStatus(message, type = 'info') {
 // Initialize with some sample data if empty
 if (!localStorage.getItem('company-dashboard-todos')) {
     setTimeout(loadSampleData, 1000);
+}
+
+// Theme Toggle Functions
+
+// Initialize theme
+function initTheme() {
+    const savedTheme = localStorage.getItem('company-dashboard-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Use saved theme, else system preference, else light
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    setTheme(theme);
+}
+
+// Set theme
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('company-dashboard-theme', theme);
+    
+    // Update icon
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+        icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+    }
+    
+    // Update button title
+    const button = document.getElementById('theme-toggle');
+    if (button) {
+        button.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+    }
+}
+
+// Toggle theme
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
 }
 
 // Auto-sync every 2 minutes if token is set

@@ -17,6 +17,7 @@ const PRIORITIES = {
 
 let todos = [];
 let lastSyncTime = new Date();
+let hideCompleted = false;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -89,18 +90,28 @@ function renderTodoList(elementId, todoList) {
     const container = document.getElementById(elementId);
     if (!container) return;
     
-    if (todoList.length === 0) {
+    // Filter out completed tasks if hideCompleted is true
+    let filteredTodos = todoList;
+    if (hideCompleted) {
+        filteredTodos = todoList.filter(todo => todo.status !== 'done');
+    }
+    
+    if (filteredTodos.length === 0) {
+        const message = hideCompleted && todoList.length > 0 
+            ? 'No pending tasks. Uncheck "Hide Completed" to see all tasks.'
+            : 'No tasks found. Add your first task!';
+        
         container.innerHTML = `
             <div class="text-center py-5 text-muted">
                 <i class="bi bi-check2-circle display-6 mb-3"></i>
-                <p>No tasks found. Add your first task!</p>
+                <p>${message}</p>
             </div>
         `;
         return;
     }
     
     // Sort by: overdue first, then priority, then due date
-    const sortedTodos = [...todoList].sort((a, b) => {
+    const sortedTodos = [...filteredTodos].sort((a, b) => {
         // Overdue tasks first
         const aOverdue = isOverdue(a);
         const bOverdue = isOverdue(b);
@@ -303,6 +314,23 @@ function updateLastSync() {
     }
 }
 
+// Toggle hide completed filter
+function toggleHideCompleted() {
+    hideCompleted = !hideCompleted;
+    
+    // Update toggle switch
+    const toggle = document.getElementById('hide-completed-toggle');
+    if (toggle) {
+        toggle.checked = hideCompleted;
+    }
+    
+    // Save preference to local storage
+    localStorage.setItem('company-dashboard-hide-completed', hideCompleted.toString());
+    
+    // Re-render todos
+    renderTodos();
+}
+
 // Setup event listeners
 function setupEventListeners() {
     // Add todo form
@@ -343,6 +371,19 @@ function setupEventListeners() {
                 addQuickTask();
             }
         });
+    }
+    
+    // Hide completed toggle
+    const hideCompletedToggle = document.getElementById('hide-completed-toggle');
+    if (hideCompletedToggle) {
+        // Load saved preference
+        const savedPreference = localStorage.getItem('company-dashboard-hide-completed');
+        if (savedPreference !== null) {
+            hideCompleted = savedPreference === 'true';
+            hideCompletedToggle.checked = hideCompleted;
+        }
+        
+        hideCompletedToggle.addEventListener('change', toggleHideCompleted);
     }
     
     // Load sample data button (for testing)

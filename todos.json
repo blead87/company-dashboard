@@ -6,6 +6,7 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "Narrative format only, no CTA",
+    "project": "ROMULENS LinkedIn",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -14,14 +15,9 @@
     "description": "MFC Project Stall Scan",
     "company": "mfc",
     "priority": "medium",
-<<<<<<< HEAD
-    "dueDate": "2026-04-10",
-    "notes": "ETF contributions, liquidity buffer, deal pipeline",
-    "project": "Penalma Strategy",
-    "status": "pending",
-=======
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "notes": "Melia Punta BergantÃ­n, Palma Real, Naves Comerciales Escar",
+    "project": "MFC Project Review",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -32,6 +28,7 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "YES/NO on 4-6 week build",
+    "project": "Legnofino Platform",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -42,8 +39,8 @@
     "priority": "medium",
     "dueDate": "2026-04-09",
     "notes": "3pm AST",
+    "project": "Personal Health",
     "status": "done",
->>>>>>> 04f1449cd383988e6e4bbc5e7d33bcbde9f0aa29
     "createdAt": "2026-04-08"
   },
   {
@@ -64,6 +61,7 @@
     "priority": "medium",
     "dueDate": null,
     "notes": "",
+    "project": "Legnofino Finance",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -74,6 +72,7 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
+    "project": "Paradisus Miches",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -84,6 +83,7 @@
     "priority": "medium",
     "dueDate": "2026-04-10",
     "notes": "Traspaso de tierras Jarabacoa",
+    "project": "Penalma Legal",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -94,6 +94,7 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
+    "project": "Legnofino Legal",
     "status": "pending",
     "createdAt": "2026-04-10"
   }

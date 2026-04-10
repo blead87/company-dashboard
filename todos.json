@@ -58,5 +58,15 @@
     "notes": "",
     "status": "pending",
     "createdAt": "2026-04-09"
+  },
+  {
+    "id": "1775832896837",
+    "description": "Pagar impuestos pendientes",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "status": "pending",
+    "createdAt": "2026-04-10"
   }
 ]

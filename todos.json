@@ -6,6 +6,7 @@
     "priority": "medium",
     "dueDate": "2026-04-10",
     "notes": "ETF contributions, liquidity buffer, deal pipeline",
+    "project": "Penalma Strategy",
     "status": "pending",
     "createdAt": "2026-04-08"
   },
@@ -16,6 +17,7 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
+    "project": "Factory Maintenance",
     "status": "pending",
     "createdAt": "2026-04-09"
   }

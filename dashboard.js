@@ -192,6 +192,10 @@ function renderTodoItem(todo) {
         `<small class="text-muted d-block mt-1"><i class="bi bi-chat-left-text me-1"></i>${todo.notes}</small>` : 
         '';
     
+    const projectText = todo.project ? 
+        `<span class="badge bg-info me-2"><i class="bi bi-folder me-1"></i>${todo.project}</span>` : 
+        '';
+    
     return `
         <div class="card mb-2 todo-item ${statusClass} ${overdueClass} company-${todo.company}">
             <div class="card-body py-2">
@@ -210,6 +214,7 @@ function renderTodoItem(todo) {
                                 <span class="${priority.class} px-2 py-1 rounded me-2">
                                     <i class="${priority.icon} me-1"></i>${priority.name}
                                 </span>
+                                ${projectText}
                             </div>
                             <button class="btn btn-sm btn-outline-danger" id="todo-delete-${todo.id}">
                                 <i class="bi bi-trash"></i>
@@ -229,7 +234,7 @@ function renderTodoItem(todo) {
 }
 
 // Add new todo
-function addTodo(description, company, priority, dueDate = null, notes = '') {
+function addTodo(description, company, priority, dueDate = null, notes = '', project = '') {
     const newTodo = {
         id: Date.now().toString(),
         description: description.trim(),
@@ -237,6 +242,7 @@ function addTodo(description, company, priority, dueDate = null, notes = '') {
         priority: priority,
         dueDate: dueDate,
         notes: notes.trim(),
+        project: project.trim(),
         status: 'pending',
         createdAt: new Date().toISOString().split('T')[0]
     };
@@ -396,8 +402,9 @@ function setupEventListeners() {
             const priority = document.getElementById('task-priority').value;
             const dueDate = document.getElementById('task-due-date').value || null;
             const notes = document.getElementById('task-notes').value;
+            const project = document.getElementById('task-project').value;
             
-            addTodo(description, company, priority, dueDate, notes);
+            addTodo(description, company, priority, dueDate, notes, project);
             
             // Show success message
             const button = form.querySelector('button[type="submit"]');

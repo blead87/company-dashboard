@@ -1,13 +1,49 @@
 [
   {
-    "id": "4",
-    "description": "Define Penalma Q2 2026 Targets",
-    "company": "penalma",
+    "id": "1",
+    "description": "Check LinkedIn Post 4 performance",
+    "company": "oorban",
+    "priority": "high",
+    "dueDate": "2026-04-09",
+    "notes": "Narrative format only, no CTA",
+    "status": "done",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "2",
+    "description": "MFC Project Stall Scan",
+    "company": "mfc",
     "priority": "medium",
+<<<<<<< HEAD
     "dueDate": "2026-04-10",
     "notes": "ETF contributions, liquidity buffer, deal pipeline",
     "project": "Penalma Strategy",
     "status": "pending",
+=======
+    "dueDate": "2026-04-09",
+    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "status": "done",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "3",
+    "description": "Legnofino Platform Decision",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-09",
+    "notes": "YES/NO on 4-6 week build",
+    "status": "done",
+    "createdAt": "2026-04-08"
+  },
+  {
+    "id": "5",
+    "description": "Therapist Appointment",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": "2026-04-09",
+    "notes": "3pm AST",
+    "status": "done",
+>>>>>>> 04f1449cd383988e6e4bbc5e7d33bcbde9f0aa29
     "createdAt": "2026-04-08"
   },
   {
@@ -20,5 +56,45 @@
     "project": "Factory Maintenance",
     "status": "pending",
     "createdAt": "2026-04-09"
+  },
+  {
+    "id": "1775832896837",
+    "description": "Pagar impuestos pendientes",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833003374",
+    "description": "Pasar archivo de Revit de Paradisus Miches al arquitecto junior",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833051580",
+    "description": "Asegurar que se firmen los Papeles de Penalma.",
+    "company": "penalma",
+    "priority": "medium",
+    "dueDate": "2026-04-10",
+    "notes": "Traspaso de tierras Jarabacoa",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833212745",
+    "description": "Asegurar que se firmen los papeles de la gerencia de Legnofino y Carpintry (Lic. Robles)",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "pending",
+    "createdAt": "2026-04-10"
   }
 ]

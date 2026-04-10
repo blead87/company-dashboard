@@ -6,7 +6,6 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "Narrative format only, no CTA",
-    "project": "ROMULENS LinkedIn",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -16,8 +15,7 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta BergantÃ­n, Palma Real, Naves Comerciales Escar",
-    "project": "MFC Project Review",
+    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -28,7 +26,6 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "YES/NO on 4-6 week build",
-    "project": "Legnofino Platform",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -39,7 +36,6 @@
     "priority": "medium",
     "dueDate": "2026-04-09",
     "notes": "3pm AST",
-    "project": "Personal Health",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -60,7 +56,6 @@
     "priority": "medium",
     "dueDate": null,
     "notes": "",
-    "project": "Legnofino Finance",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -71,7 +66,6 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
-    "project": "Paradisus Miches",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -82,7 +76,6 @@
     "priority": "medium",
     "dueDate": "2026-04-10",
     "notes": "Traspaso de tierras Jarabacoa",
-    "project": "Penalma Legal",
     "status": "pending",
     "createdAt": "2026-04-10"
   },
@@ -93,7 +86,6 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
-    "project": "Legnofino Legal",
     "status": "pending",
     "createdAt": "2026-04-10"
   },

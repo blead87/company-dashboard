@@ -50,7 +50,6 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "",
-    "project": "Factory Maintenance",
     "status": "pending",
     "createdAt": "2026-04-09"
   },
@@ -95,6 +94,16 @@
     "dueDate": "2026-04-10",
     "notes": "",
     "project": "Legnofino Legal",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833450433",
+    "description": "Asegurar la compra de los FF&E de los alojamientos.",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
     "status": "pending",
     "createdAt": "2026-04-10"
   }

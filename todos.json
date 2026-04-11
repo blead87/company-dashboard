@@ -153,5 +153,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1775929558517",
+    "description": "Revisar cambios en plantas Hotel Bellver",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-11"
   }
 ]

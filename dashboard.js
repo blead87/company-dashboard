@@ -623,18 +623,22 @@ async function pullFromGitHub() {
     syncInProgress = true;
     
     try {
+        // Use GitHub API to get file content (supports auth)
         const response = await fetch(
-            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${TODOS_FILE_PATH}`,
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
             {
                 headers: {
                     'Authorization': `token ${getGitHubToken()}`,
-                    'Accept': 'application/vnd.github.v3.raw'
+                    'Accept': 'application/vnd.github.v3+json'
                 }
             }
         );
         
         if (response.ok) {
-            const remoteTodos = await response.json();
+            const data = await response.json();
+            // GitHub API returns base64 encoded content
+            const content = atob(data.content);
+            const remoteTodos = JSON.parse(content);
             
             // Simple conflict resolution: remote wins if newer
             // In a real app, you'd want more sophisticated merging
@@ -648,8 +652,9 @@ async function pullFromGitHub() {
             updateStats();
             showSyncStatus('✅ Synced from GitHub', 'success');
         } else {
-            console.error('GitHub pull failed:', response.status);
-            showSyncStatus('❌ Sync failed', 'danger');
+            const error = await response.json();
+            console.error('GitHub pull failed:', error);
+            showSyncStatus(`❌ Sync failed: ${error.message || response.status}`, 'danger');
         }
     } catch (error) {
         console.error('Error pulling from GitHub:', error);
@@ -666,9 +671,15 @@ async function syncWithGitHub() {
         return;
     }
     
-    // First pull, then push (simple strategy)
-    await pullFromGitHub();
-    await pushToGitHub();
+    try {
+        // First pull, then push (simple strategy)
+        await pullFromGitHub();
+        await pushToGitHub();
+        showSyncStatus('✅ Synced successfully!', 'success');
+    } catch (error) {
+        console.error('Sync error:', error);
+        showSyncStatus(`❌ Sync error: ${error.message}`, 'danger');
+    }
 }
 
 // Show sync status message

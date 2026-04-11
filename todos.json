@@ -15,7 +15,7 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta BergantÃ­n, Palma Real, Naves Comerciales Escar",
+    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -120,5 +120,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775877048497",
+    "description": "Alta Consular y Pasaporte Aria Renee",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": "2026-05-15",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-11"
   }
 ]

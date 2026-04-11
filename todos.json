@@ -6,7 +6,7 @@
     "priority": "high",
     "dueDate": "2026-04-10",
     "notes": "Narrative format only, no CTA",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -16,7 +16,7 @@
     "priority": "medium",
     "dueDate": "2026-04-09",
     "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -26,7 +26,7 @@
     "priority": "high",
     "dueDate": "2026-04-09",
     "notes": "YES/NO on 4-6 week build",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -36,7 +36,7 @@
     "priority": "medium",
     "dueDate": "2026-04-10",
     "notes": "ETF contributions, liquidity buffer, deal pipeline",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   },
   {
@@ -46,7 +46,7 @@
     "priority": "medium",
     "dueDate": "2026-04-09",
     "notes": "3pm AST",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-08"
   }
 ]

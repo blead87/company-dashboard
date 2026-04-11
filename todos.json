@@ -1,15 +1,5 @@
 [
   {
-    "id": "1",
-    "description": "Check LinkedIn Post 4 performance",
-    "company": "oorban",
-    "priority": "high",
-    "dueDate": "2026-04-11",
-    "notes": "Narrative format only, no CTA",
-    "status": "pending",
-    "createdAt": "2026-04-08"
-  },
-  {
     "id": "4",
     "description": "Define Penalma Q2 2026 Targets",
     "company": "penalma",

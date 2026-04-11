@@ -4,7 +4,7 @@
     "description": "Check LinkedIn Post 4 performance",
     "company": "oorban",
     "priority": "high",
-    "dueDate": "2026-04-10",
+    "dueDate": "2026-04-09",
     "notes": "Narrative format only, no CTA",
     "status": "done",
     "createdAt": "2026-04-08"
@@ -30,16 +30,6 @@
     "createdAt": "2026-04-08"
   },
   {
-    "id": "4",
-    "description": "Define Penalma Q2 2026 Targets",
-    "company": "penalma",
-    "priority": "medium",
-    "dueDate": "2026-04-10",
-    "notes": "ETF contributions, liquidity buffer, deal pipeline",
-    "status": "done",
-    "createdAt": "2026-04-08"
-  },
-  {
     "id": "5",
     "description": "Therapist Appointment",
     "company": "personal",
@@ -48,5 +38,87 @@
     "notes": "3pm AST",
     "status": "done",
     "createdAt": "2026-04-08"
+  },
+  {
+    "id": "1775775402541",
+    "description": "Llamar a Edward para arreglo de maquina",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "done",
+    "createdAt": "2026-04-09"
+  },
+  {
+    "id": "1775832896837",
+    "description": "Pagar impuestos pendientes",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "status": "done",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833003374",
+    "description": "Pasar archivo de Revit de Paradisus Miches al arquitecto junior",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833051580",
+    "description": "Asegurar que se firmen los Papeles de Penalma.",
+    "company": "penalma",
+    "priority": "medium",
+    "dueDate": "2026-04-10",
+    "notes": "Traspaso de tierras Jarabacoa",
+    "status": "done",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833212745",
+    "description": "Asegurar que se firmen los papeles de la gerencia de Legnofino y Carpintry (Lic. Robles)",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "done",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775833450433",
+    "description": "Asegurar la compra de los FF&E de los alojamientos.",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "status": "done",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775835532481",
+    "description": "Confirmar pendiente de Panel Sandwich",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "Naves Comerciales",
+    "status": "pending",
+    "createdAt": "2026-04-10"
+  },
+  {
+    "id": "1775836933912",
+    "description": "Pagar TC",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-04-10",
+    "notes": "",
+    "project": "",
+    "status": "done",
+    "createdAt": "2026-04-10"
   }
 ]

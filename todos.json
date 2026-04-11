@@ -10,26 +10,6 @@
     "createdAt": "2026-04-08"
   },
   {
-    "id": "2",
-    "description": "MFC Project Stall Scan",
-    "company": "mfc",
-    "priority": "medium",
-    "dueDate": "2026-04-09",
-    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
-    "status": "pending",
-    "createdAt": "2026-04-08"
-  },
-  {
-    "id": "3",
-    "description": "Legnofino Platform Decision",
-    "company": "legnofino",
-    "priority": "high",
-    "dueDate": "2026-04-09",
-    "notes": "YES/NO on 4-6 week build",
-    "status": "pending",
-    "createdAt": "2026-04-08"
-  },
-  {
     "id": "4",
     "description": "Define Penalma Q2 2026 Targets",
     "company": "penalma",

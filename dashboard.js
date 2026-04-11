@@ -295,13 +295,24 @@ function deleteTodo(todoId) {
 function updateStats() {
     const total = todos.length;
     const pending = todos.filter(t => t.status === 'pending').length;
+    const completed = todos.filter(t => t.status === 'done').length;
     const highPriority = todos.filter(t => t.priority === 'high' && t.status === 'pending').length;
     const overdue = todos.filter(t => isOverdue(t) && t.status === 'pending').length;
+    const completionPercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
     
     document.getElementById('total-todos').textContent = total;
     document.getElementById('pending-todos').textContent = pending;
+    document.getElementById('completed-todos').textContent = completed;
     document.getElementById('high-priority').textContent = highPriority;
     document.getElementById('overdue-todos').textContent = overdue;
+    
+    // Update progress bar if it exists
+    const progressBar = document.getElementById('completion-progress');
+    if (progressBar) {
+        progressBar.style.width = `${completionPercentage}%`;
+        progressBar.setAttribute('aria-valuenow', completionPercentage);
+        progressBar.textContent = `${completionPercentage}%`;
+    }
 }
 
 // Check if a todo is overdue

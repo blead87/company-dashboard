@@ -142,5 +142,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1775929513978",
+    "description": "Revisar pago de vacaciones pendientes",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-14",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-11"
   }
 ]

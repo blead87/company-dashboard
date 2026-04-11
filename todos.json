@@ -18,15 +18,5 @@
     "notes": "ETF contributions, liquidity buffer, deal pipeline",
     "status": "pending",
     "createdAt": "2026-04-08"
-  },
-  {
-    "id": "5",
-    "description": "Therapist Appointment",
-    "company": "personal",
-    "priority": "medium",
-    "dueDate": "2026-04-09",
-    "notes": "3pm AST",
-    "status": "pending",
-    "createdAt": "2026-04-08"
   }
 ]

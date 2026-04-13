@@ -164,10 +164,15 @@ function renderTodoList(elementId, todoList) {
     // Add event listeners to the new elements
     sortedTodos.forEach(todo => {
         const checkbox = document.getElementById(`todo-checkbox-${todo.id}`);
+        const editBtn = document.getElementById(`todo-edit-${todo.id}`);
         const deleteBtn = document.getElementById(`todo-delete-${todo.id}`);
         
         if (checkbox) {
             checkbox.addEventListener('change', () => toggleTodoStatus(todo.id));
+        }
+        
+        if (editBtn) {
+            editBtn.addEventListener('click', () => openEditModal(todo.id));
         }
         
         if (deleteBtn) {
@@ -216,9 +221,14 @@ function renderTodoItem(todo) {
                                 </span>
                                 ${projectText}
                             </div>
-                            <button class="btn btn-sm btn-outline-danger" id="todo-delete-${todo.id}">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-1" id="todo-edit-${todo.id}" title="Edit task">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" id="todo-delete-${todo.id}" title="Delete task">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </div>
                         <p class="mb-1 mt-2">${todo.description}</p>
                         ${dueDateText}
@@ -288,6 +298,67 @@ function deleteTodo(todoId) {
         saveTodos();
         renderTodos();
         updateStats();
+    }
+}
+
+// Open edit modal
+function openEditModal(todoId) {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    // Populate form fields
+    document.getElementById('edit-task-id').value = todo.id;
+    document.getElementById('edit-task-description').value = todo.description;
+    document.getElementById('edit-task-company').value = todo.company;
+    document.getElementById('edit-task-priority').value = todo.priority;
+    document.getElementById('edit-task-project').value = todo.project || '';
+    document.getElementById('edit-task-status').value = todo.status;
+    document.getElementById('edit-task-due-date').value = todo.dueDate || '';
+    document.getElementById('edit-task-notes').value = todo.notes || '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+    modal.show();
+}
+
+// Save edited todo
+function saveEditedTodo() {
+    const todoId = document.getElementById('edit-task-id').value;
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    
+    // Update todo properties
+    todo.description = document.getElementById('edit-task-description').value.trim();
+    todo.company = document.getElementById('edit-task-company').value;
+    todo.priority = document.getElementById('edit-task-priority').value;
+    todo.project = document.getElementById('edit-task-project').value.trim();
+    todo.status = document.getElementById('edit-task-status').value;
+    todo.dueDate = document.getElementById('edit-task-due-date').value || null;
+    todo.notes = document.getElementById('edit-task-notes').value.trim();
+    
+    // Save and update
+    saveTodos();
+    renderTodos();
+    updateStats();
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+    modal.hide();
+}
+
+// Delete from edit modal
+function deleteFromEditModal() {
+    const todoId = document.getElementById('edit-task-id').value;
+    
+    if (confirm('Are you sure you want to delete this task?')) {
+        todos = todos.filter(t => t.id !== todoId);
+        saveTodos();
+        renderTodos();
+        updateStats();
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+        modal.hide();
     }
 }
 
@@ -454,6 +525,17 @@ function setupEventListeners() {
         }
         
         hideCompletedToggle.addEventListener('change', toggleHideCompleted);
+    }
+    
+    // Edit modal event listeners
+    const editSaveBtn = document.getElementById('edit-task-save');
+    if (editSaveBtn) {
+        editSaveBtn.addEventListener('click', saveEditedTodo);
+    }
+    
+    const editDeleteBtn = document.getElementById('edit-task-delete');
+    if (editDeleteBtn) {
+        editDeleteBtn.addEventListener('click', deleteFromEditModal);
     }
     
     // Load sample data button (for testing)

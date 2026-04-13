@@ -263,5 +263,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776100504811",
+    "description": "Reunion con Charlotte",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

@@ -230,5 +230,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776093007796",
+    "description": "Pago veterinario 69,000",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "Carlos Álvarez \nPasaporte AZ475869\nBanco popular\n# 0847339298\nCta corriente",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

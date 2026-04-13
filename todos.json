@@ -252,5 +252,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776095883838",
+    "description": "Pagar completivo Gestiones Pajilla - Ramon Nova",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

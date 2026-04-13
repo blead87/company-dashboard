@@ -15,7 +15,7 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "notes": "Melia Punta BergantÃ­n, Palma Real, Naves Comerciales Escar",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -167,7 +167,7 @@
   },
   {
     "id": "1776090062163",
-    "description": "Luca t�cnico de Biesse",
+    "description": "Luca técnico de Biesse",
     "company": "oorban",
     "priority": "medium",
     "dueDate": null,

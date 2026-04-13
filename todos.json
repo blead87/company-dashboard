@@ -15,7 +15,7 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta Bergantín, Palma Real, Naves Comerciales Escar",
+    "notes": "Melia Punta BergantÃƒÂ­n, Palma Real, Naves Comerciales Escar",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -131,5 +131,137 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1775877276117",
+    "description": "Llevar a la Changan a Montilla para revisar el check engine",
+    "company": "personal",
+    "priority": "high",
+    "dueDate": "2026-04-14",
+    "notes": "",
+    "project": "",
+    "status": "done",
+    "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1775929513978",
+    "description": "Revisar pago de vacaciones pendientes",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-14",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1775929558517",
+    "description": "Revisar cambios en plantas Hotel Bellver",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-11"
+  },
+  {
+    "id": "1776090062163",
+    "description": "Luca tÃ©cnico de Biesse",
+    "company": "oorban",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092197103",
+    "description": "Pagara Edward piezas maquina y viaje",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092234060",
+    "description": "Pagar MDF Hidrofugo - MADESOL",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "Club Med",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092639271",
+    "description": "Reunion con Bismar - Proyectos Melia",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092679630",
+    "description": "Reunion Planificacion - Proyecto Secrets Macao",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092708562",
+    "description": "Llevar a la Subaru a revisar motor y A/C a Montilla Motors.",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": "2026-04-14",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776093007796",
+    "description": "Pago veterinario 69,000",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "Carlos Álvarez \nPasaporte AZ475869\nBanco popular\n# 0847339298\nCta corriente",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776093860802",
+    "description": "Confirmar propuesta a Omayra",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776095883838",
+    "description": "Pagar completivo Gestiones Pajilla - Ramon Nova",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

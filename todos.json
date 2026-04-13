@@ -197,5 +197,16 @@
     "project": "Club Med",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092639271",
+    "description": "Reunion con Bismar - Proyectos Melia",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

@@ -175,5 +175,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776092197103",
+    "description": "Pagara Edward piezas maquina y viaje",
+    "company": "legnofino",
+    "priority": "high",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

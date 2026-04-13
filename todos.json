@@ -241,5 +241,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776093860802",
+    "description": "Confirmar propuesta a Omayra",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": "2026-04-13",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-13"
   }
 ]

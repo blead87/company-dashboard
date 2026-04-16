@@ -274,5 +274,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-04-13"
+  },
+  {
+    "id": "1776349754189",
+    "description": "Alzados de Opciones de lavabo y espejo MCB",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-16",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-16"
   }
 ]

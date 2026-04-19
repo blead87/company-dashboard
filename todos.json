@@ -285,5 +285,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-16"
+  },
+  {
+    "id": "1776640693248",
+    "description": "Pagos de Jarabacoa. Nomina, internet, etc",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-19"
   }
 ]

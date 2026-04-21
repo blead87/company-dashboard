@@ -329,5 +329,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-21"
+  },
+  {
+    "id": "1776803647842",
+    "description": "Pagar a Salcedo 2 facturas",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "2026-04-21",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-21"
   }
 ]

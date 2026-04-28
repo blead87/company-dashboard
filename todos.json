@@ -351,5 +351,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-04-21"
+  },
+  {
+    "id": "1777402982853",
+    "description": "Pago Kocer Media US$1,500",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-28"
   }
 ]

@@ -406,5 +406,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-28"
+  },
+  {
+    "id": "1777403258633",
+    "description": "Pago tarjeta Sr. Mallen 33",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-28"
   }
 ]

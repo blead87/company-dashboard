@@ -428,5 +428,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-04-28"
+  },
+  {
+    "id": "1777472174535",
+    "description": "Pago mant cocotal US$ 2943.28 + US$279.30",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-04-29"
   }
 ]

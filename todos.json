@@ -439,5 +439,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-04-29"
+  },
+  {
+    "id": "1778509127045",
+    "description": "Pago Maite contratación empleados",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-05-11"
   }
 ]

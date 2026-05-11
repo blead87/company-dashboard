@@ -15,7 +15,7 @@
     "company": "mfc",
     "priority": "medium",
     "dueDate": "2026-04-09",
-    "notes": "Melia Punta BergantÃƒÂ­n, Palma Real, Naves Comerciales Escar",
+    "notes": "Melia Punta BergantÃƒÆ’Ã‚Â­n, Palma Real, Naves Comerciales Escar",
     "status": "done",
     "createdAt": "2026-04-08"
   },
@@ -237,7 +237,7 @@
     "company": "legnofino",
     "priority": "medium",
     "dueDate": "2026-04-13",
-    "notes": "Carlos Álvarez \nPasaporte AZ475869\nBanco popular\n# 0847339298\nCta corriente",
+    "notes": "Carlos Ãlvarez \nPasaporte AZ475869\nBanco popular\n# 0847339298\nCta corriente",
     "project": "",
     "status": "done",
     "createdAt": "2026-04-13"
@@ -442,7 +442,7 @@
   },
   {
     "id": "1778509127045",
-    "description": "Pago Maite contrataci�n empleados",
+    "description": "Pago Maite contratación empleados",
     "company": "legnofino",
     "priority": "medium",
     "dueDate": null,

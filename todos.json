@@ -505,5 +505,71 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-05-13"
+  },
+  {
+    "id": "1778683622197",
+    "description": "Sacar metrado de paneles acústicos - Salas de Convenciones",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "",
+    "notes": "Reunión Meliá 21/05. Zenon reporta 438m² — validar cantidad.",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
+  },
+  {
+    "id": "1778683622198",
+    "description": "Aprobar muestras físicas de paneles acústicos - Salas de Convenciones",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "",
+    "notes": "Coordinación con Meliá para aprobación de muestras",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
+  },
+  {
+    "id": "1778683622199",
+    "description": "Aprobar muestras físicas de alfombras y reductores",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "",
+    "notes": "Coordinación con Meliá para aprobación de muestras",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
+  },
+  {
+    "id": "1778683622200",
+    "description": "Validar metrado de Zenon: 438m² paneles acústicos",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": "",
+    "notes": "Cantidad reportada por Zenon. Verificar contra metrado definitivo.",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
+  },
+  {
+    "id": "1778683622201",
+    "description": "Elaborar detalle del arco sobrepuesto - Coffee Shop",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "",
+    "notes": "Definir y dibujar detalle constructivo del arco",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
+  },
+  {
+    "id": "1778683622202",
+    "description": "Revisar planta de acabados - cancelería en sala de reuniones Circle",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "",
+    "notes": "Verificar cancelería en la sala de reuniones del área Circle Lounge",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-21"
   }
 ]

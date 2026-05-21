@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         themeToggle.addEventListener('click', toggleTheme);
     }
     
-    // Auto-refresh every 5 minutes
-    setInterval(loadTodos, 5 * 60 * 1000);
+    // Auto-refresh every 1 minute (cache-busting via timestamp ensures fresh data)
+    setInterval(loadTodos, 60 * 1000);
     
     // Auto-sync on startup if token is set
     setTimeout(() => {
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadTodos() {
     try {
         // Try to load from GitHub
-        const response = await fetch('https://raw.githubusercontent.com/blead87/company-dashboard/main/todos.json');
+        const response = await fetch('https://raw.githubusercontent.com/blead87/company-dashboard/main/todos.json?' + Date.now());
         if (response.ok) {
             todos = await response.json();
             console.log('Loaded todos from GitHub:', todos.length);

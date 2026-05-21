@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadTodos() {
     try {
         // Try to load from GitHub
-        const response = await fetch('https://raw.githubusercontent.com/blead87/company-dashboard/main/todos.json?' + Date.now());
+        const response = await fetch('https://blead87.github.io/company-dashboard/todos.json?' + Date.now());
         if (response.ok) {
             todos = await response.json();
             console.log('Loaded todos from GitHub:', todos.length);

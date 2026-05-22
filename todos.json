@@ -604,5 +604,16 @@
     "project": "Meeting Rooms Melia Caribe Beach",
     "status": "pending",
     "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1779471061531",
+    "description": "Revisar layout tipo 1 habitaciones King vs tabla de mobiliario - Melia Caribe Beach (MSB)",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "Hay una diferencia entre el layout y la tabla de mobiliario. Verificar y confirmar.",
+    "project": "Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-22"
   }
 ]

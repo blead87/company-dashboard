@@ -435,7 +435,18 @@ function updateLastSync() {
 function saveGitHubToken() {
     const tokenInput = document.getElementById('github-token');
     if (tokenInput && tokenInput.value.trim()) {
-        setGitHubToken(tokenInput.value.trim());
+        const rawToken = tokenInput.value.trim();
+        // Skip if it's the masked placeholder display
+        if (rawToken === '••••••••••••••••••••') {
+            showSyncStatus('⚠️ Token already saved, enter a new one to replace it', 'warning');
+            return;
+        }
+        const cleanToken = sanitizeToken(rawToken);
+        if (!cleanToken) {
+            showSyncStatus('⚠️ Token contains only invalid characters', 'warning');
+            return;
+        }
+        setGitHubToken(cleanToken);
         tokenInput.value = ''; // Clear for security
         showSyncStatus('✅ GitHub token saved', 'success');
         
@@ -631,6 +642,12 @@ function getGitHubToken() {
     return null;
 }
 
+// Strip non-ISO-8859-1 chars from token (prevents fetch header errors)
+function sanitizeToken(token) {
+    if (!token) return '';
+    return token.replace(/[^\x00-\x7F]/g, '').trim();
+}
+
 // Set GitHub token
 function setGitHubToken(token) {
     githubToken = token;
@@ -645,7 +662,7 @@ async function getFileSha() {
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
             {
                 headers: {
-                    'Authorization': `token ${getGitHubToken()}`,
+                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
                     'Accept': 'application/vnd.github.v3+json'
                 }
             }
@@ -680,7 +697,7 @@ async function pushToGitHub() {
             {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${getGitHubToken()}`,
+                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
                     'Accept': 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json'
                 },
@@ -723,7 +740,7 @@ async function pullFromGitHub() {
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
             {
                 headers: {
-                    'Authorization': `token ${getGitHubToken()}`,
+                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
                     'Accept': 'application/vnd.github.v3+json'
                 }
             }

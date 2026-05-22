@@ -690,7 +690,9 @@ async function pushToGitHub() {
     
     try {
         const sha = await getFileSha();
-        const content = btoa(JSON.stringify(todos, null, 2));
+        // UTF-8-safe base64 (btoa only handles Latin1)
+        const jsonStr = JSON.stringify(todos, null, 2);
+        const content = btoa(unescape(encodeURIComponent(jsonStr)));
         
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
@@ -749,7 +751,8 @@ async function pullFromGitHub() {
         if (response.ok) {
             const data = await response.json();
             // GitHub API returns base64 encoded content
-            const content = atob(data.content);
+            // UTF-8-safe base64 decode (pair for btoa+encodeURIComponent)
+            const content = decodeURIComponent(escape(atob(data.content)));
             const remoteTodos = JSON.parse(content);
             
             // Simple conflict resolution: remote wins if newer

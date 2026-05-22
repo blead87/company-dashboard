@@ -615,5 +615,27 @@
     "project": "Melia Caribe Beach MCB",
     "status": "pending",
     "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1779471061532",
+    "description": "Hacer presupuesto proyecto Ignacio - Cana Beach",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "Elaborar presupuesto para el proyecto.",
+    "project": "Cana Beach",
+    "status": "pending",
+    "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1779471061533",
+    "description": "Hacer presupuesto oficinas Real Servicio - Melia Caribe Beach",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "Elaborar presupuesto para las oficinas de Real Servicio en Melia Caribe Beach.",
+    "project": "Melia Caribe Beach MCB",
+    "status": "pending",
+    "createdAt": "2026-05-22"
   }
 ]

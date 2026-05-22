@@ -610,9 +610,9 @@
     "description": "Revisar layout tipo 1 habitaciones King vs tabla de mobiliario - Melia Caribe Beach (MSB)",
     "company": "mfc",
     "priority": "high",
-    "dueDate": null,
+    "dueDate": "2026-05-26",
     "notes": "Hay una diferencia entre el layout y la tabla de mobiliario. Verificar y confirmar.",
-    "project": "Melia Caribe Beach",
+    "project": "Melia Caribe Beach MCB",
     "status": "pending",
     "createdAt": "2026-05-22"
   }

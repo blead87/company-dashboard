@@ -386,19 +386,21 @@ function updateStats() {
     }
 }
 
-// Check if a todo is overdue
+// Check if a todo is overdue — parse YYYY-MM-DD as local time, not UTC
 function isOverdue(todo) {
     if (!todo.dueDate || todo.status === 'done') return false;
-    const dueDate = new Date(todo.dueDate);
+    const parts = todo.dueDate.split('-');
+    const dueDate = new Date(+parts[0], +parts[1] - 1, +parts[2]);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return dueDate < today;
 }
 
-// Format date for display
+// Format date for display — parse YYYY-MM-DD as local time, not UTC
 function formatDate(dateString) {
     if (!dateString) return '';
-    const date = new Date(dateString);
+    const parts = dateString.split('-');
+    const date = new Date(+parts[0], +parts[1] - 1, +parts[2]);
     return date.toLocaleDateString('en-US', { 
         weekday: 'short', 
         month: 'short', 

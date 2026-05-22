@@ -577,8 +577,8 @@
     "description": "Hacer reuni\u00f3n para mantenimiento de m\u00e1quinas CNC",
     "company": "legnofino",
     "priority": "high",
-    "dueDate": null,
-    "notes": "Coordinar con t\u00e9cnico de Biesse para revisi\u00f3n de piezas de mantenimiento",
+    "dueDate": "2026-05-22",
+    "notes": "1:00 PM - Ver muestras. Coordinar con t\u00e9cnico de Biesse para revisi\u00f3n de piezas de mantenimiento",
     "project": "",
     "status": "pending",
     "createdAt": "2026-05-22"

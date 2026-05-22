@@ -582,5 +582,27 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1779471061529",
+    "description": "Pasar l\u00e1mpara para el foyer - Salas de Convenciones",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "De la reuni\u00f3n con Meli\u00e1. L\u00e1mpara para colocar en el foyer de las salas de convenciones.",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1779471061530",
+    "description": "Detalle del cajillo para cortinas - Salas de Convenciones",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "De la reuni\u00f3n con Meli\u00e1. Elaborar detalle del cajillo (cornisa/caj\u00f3n) para las cortinas.",
+    "project": "Meeting Rooms Melia Caribe Beach",
+    "status": "pending",
+    "createdAt": "2026-05-22"
   }
 ]

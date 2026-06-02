@@ -637,5 +637,16 @@
     "project": "Melia Caribe Beach MCB",
     "status": "done",
     "createdAt": "2026-05-22"
+  },
+  {
+    "id": "1780415194486",
+    "description": "Responder correo dudas Punta Bergantin",
+    "company": "mfc",
+    "priority": "high",
+    "dueDate": "2026-06-03",
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-06-02"
   }
 ]

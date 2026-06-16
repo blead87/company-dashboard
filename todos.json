@@ -584,17 +584,6 @@
     "createdAt": "2026-05-22"
   },
   {
-    "id": "1779471061529",
-    "description": "Pasar lámpara para el foyer - Salas de Convenciones",
-    "company": "mfc",
-    "priority": "high",
-    "dueDate": "2026-05-25",
-    "notes": "De la reunión con Meliá. Lámpara para colocar en el foyer de las salas de convenciones.",
-    "project": "Meeting Rooms Melia Caribe Beach",
-    "status": "pending",
-    "createdAt": "2026-05-22"
-  },
-  {
     "id": "1779471061530",
     "description": "Detalle del cajillo para cortinas - Salas de Convenciones",
     "company": "mfc",

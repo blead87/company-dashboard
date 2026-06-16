@@ -637,5 +637,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-06-02"
+  },
+  {
+    "id": "1781647630291",
+    "description": "Llevar Changan a Santo Domingo",
+    "company": "personal",
+    "priority": "high",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-06-16"
   }
 ]

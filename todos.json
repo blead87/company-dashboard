@@ -725,5 +725,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787075277640",
+    "description": "Actualizar plantas de PB con planos de arquitectura",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "Punta Bergantin",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

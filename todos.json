@@ -654,7 +654,7 @@
     "description": "Confirmar status de la Changan y fecha de entrega",
     "company": "personal",
     "priority": "medium",
-    "dueDate": null,
+    "dueDate": "2026-08-18",
     "notes": "",
     "project": "",
     "status": "pending",

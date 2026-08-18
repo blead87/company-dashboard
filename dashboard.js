@@ -2,25 +2,28 @@
 // Data stored in todos.json, synced via GitHub
 
 const COMPANIES = {
-    'oorban': { name: 'Oorban', color: '#4a6fa5', fullName: 'Oorban (ROMULENS/PARKEADO)' },
-    'mfc': { name: 'MFC', color: '#6b8e23', fullName: 'MFC Arquitectos' },
+    'oorban':    { name: 'Oorban',    color: '#4a6fa5', fullName: 'Oorban (ROMULENS/PARKEADO)' },
+    'mfc':       { name: 'MFC',       color: '#6b8e23', fullName: 'MFC Arquitectos' },
     'legnofino': { name: 'Legnofino', color: '#d2691e', fullName: 'Legnofino' },
-    'penalma': { name: 'Penalma', color: '#8b4513', fullName: 'Penalma Capital' },
-    'personal': { name: 'Personal', color: '#6a5acd', fullName: 'Personal' }
+    'penalma':   { name: 'Penalma',   color: '#8b4513', fullName: 'Penalma Capital' },
+    'personal':  { name: 'Personal',  color: '#6a5acd', fullName: 'Personal' }
 };
 
 const PRIORITIES = {
-    'high': { name: 'High', class: 'priority-high', icon: 'bi-exclamation-triangle-fill text-danger' },
-    'medium': { name: 'Medium', class: 'priority-medium', icon: 'bi-exclamation-circle-fill text-warning' },
-    'low': { name: 'Low', class: 'priority-low', icon: 'bi-info-circle-fill text-success' }
+    'high':   { name: 'Alta',  class: 'high' },
+    'medium': { name: 'Media', class: 'medium' },
+    'low':    { name: 'Baja',  class: 'low' }
 };
 
 let todos = [];
 let lastSyncTime = new Date();
-let hideCompleted = false;
 let syncInProgress = false;
 let githubToken = null;
 let hasUnsavedChanges = false; // true when local edits exist that haven't been pushed yet
+let searchQuery = '';
+let activeProjectFilter = null; // project name to filter by, or null
+let showArchive = false;
+
 const REPO_OWNER = 'blead87';
 const REPO_NAME = 'company-dashboard';
 const TODOS_FILE_PATH = 'todos.json';
@@ -31,32 +34,26 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     updateLastSync();
     loadGitHubTokenToUI();
-    initTheme();
-    
-    // Add theme toggle event listener
-    const themeToggle = document.getElementById('theme-toggle');
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-    
-    // Auto-refresh every 1 minute (cache-busting via timestamp ensures fresh data)
+    populateCompanySelects();
+    renderTodayLabel();
+
+    // Auto-refresh every 60 seconds (pulls fresh data only when no unsaved edits)
     setInterval(loadTodos, 60 * 1000);
-    
-    // Auto-sync on startup if token is set
-    setTimeout(() => {
-        if (getGitHubToken()) {
-            syncWithGitHub();
-        }
-    }, 2000);
+
+    // Auto-sync every 2 minutes if token is set
+    setInterval(() => {
+        if (getGitHubToken()) syncWithGitHub();
+    }, 2 * 60 * 1000);
 });
 
-// Load todos from GitHub (or local storage as fallback)
+// ============================================================
+// LOAD / SAVE
+// ============================================================
+
 async function loadTodos() {
-    // CRITICAL: if there are unsaved local edits, do NOT overwrite them with
-    // remote data (which may be stale). Just re-render what we already have.
+    // CRITICAL: never clobber unsaved local edits with a stale remote copy.
     if (hasUnsavedChanges) {
-        renderTodos();
-        updateStats();
+        render();
         return;
     }
 
@@ -64,7 +61,7 @@ async function loadTodos() {
         let loaded = null;
         const token = getGitHubToken();
 
-        // If a token is set, read from the GitHub API (authoritative, always fresh).
+        // Authoritative source: GitHub API (always fresh)
         if (token) {
             try {
                 const resp = await fetch(
@@ -95,256 +92,298 @@ async function loadTodos() {
             localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
         } else {
             const saved = localStorage.getItem('company-dashboard-todos');
-            if (saved) {
-                todos = JSON.parse(saved);
-                console.log('Loaded todos from local storage:', todos.length);
-            }
+            if (saved) todos = JSON.parse(saved);
         }
     } catch (error) {
         console.log('Using local storage fallback:', error.message);
         const saved = localStorage.getItem('company-dashboard-todos');
-        if (saved) {
-            todos = JSON.parse(saved);
-        }
+        if (saved) todos = JSON.parse(saved);
     }
-    
+
     lastSyncTime = new Date();
     updateLastSync();
-    renderTodos();
-    updateStats();
+    render();
 }
 
-// Save todos (to local storage, auto-push to GitHub if token set)
 function saveTodos() {
-    // Save to local storage
     localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
-    
-    // Mark that we have local edits not yet pushed to GitHub
     hasUnsavedChanges = true;
-    
-    // Update last sync time
     lastSyncTime = new Date();
     updateLastSync();
-    
-    // Auto-push to GitHub if token is set
+
     if (getGitHubToken()) {
-        // Debounce: wait 500ms before pushing to avoid rapid API calls
         clearTimeout(window.saveTimeout);
-        window.saveTimeout = setTimeout(() => {
-            pushToGitHub();
-        }, 500);
+        window.saveTimeout = setTimeout(() => pushToGitHub(), 500);
     }
 }
 
-// Render todos for all tabs
-function renderTodos() {
-    // Render for each company tab
-    Object.keys(COMPANIES).forEach(company => {
-        const companyTodos = todos.filter(todo => todo.company === company);
-        renderTodoList(`todo-list-${company}`, companyTodos);
+// ============================================================
+// RENDER
+// ============================================================
+
+function render() {
+    renderFocusList();
+    renderArchive();
+    renderProjects();
+    updateStats();
+    updateSyncBadge();
+}
+
+function matchesSearch(t) {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const hay = [
+        t.description, t.notes, t.project,
+        t.company, COMPANIES[t.company] ? COMPANIES[t.company].name : ''
+    ].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+}
+
+function isOverdue(t) {
+    if (!t.dueDate || t.status === 'done') return false;
+    const parts = t.dueDate.split('-');
+    const dueDate = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate < today;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const parts = dateString.split('-');
+    const date = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    return date.toLocaleDateString('es-DO', {
+        month: 'short',
+        day: 'numeric',
+        year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
     });
-    
-    // Render "All" tab
-    renderTodoList('todo-list-all', todos);
 }
 
-// Render a todo list to a specific element
-function renderTodoList(elementId, todoList) {
-    const container = document.getElementById(elementId);
+function renderFocusList() {
+    const container = document.getElementById('focus-list');
     if (!container) return;
-    
-    // Filter out completed tasks if hideCompleted is true
-    let filteredTodos = todoList;
-    if (hideCompleted) {
-        filteredTodos = todoList.filter(todo => todo.status !== 'done');
-    }
-    
-    if (filteredTodos.length === 0) {
-        const message = hideCompleted && todoList.length > 0 
-            ? 'No pending tasks. Uncheck "Hide Completed" to see all tasks.'
-            : 'No tasks found. Add your first task!';
-        
+
+    const pending = todos.filter(t => t.status !== 'done' && matchesSearch(t) && matchesProject(t));
+
+    // Group by company, in COMPANIES order
+    const groups = [];
+    Object.keys(COMPANIES).forEach(company => {
+        const items = pending.filter(t => t.company === company);
+        if (items.length > 0) groups.push({ company, items });
+    });
+
+    if (groups.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-5 text-muted">
-                <i class="bi bi-check2-circle display-6 mb-3"></i>
-                <p>${message}</p>
-            </div>
-        `;
+            <div class="empty-state">
+                <i class="bi bi-check2-circle"></i>
+                <p style="font-weight:600;color:var(--text);">Todo al día</p>
+                <p style="font-size:13px;">No hay tareas pendientes${activeProjectFilter ? ' en este proyecto' : ''}.</p>
+            </div>`;
         return;
     }
-    
-    // Sort by: overdue first, then priority, then due date
-    const sortedTodos = [...filteredTodos].sort((a, b) => {
-        // Overdue tasks first
-        const aOverdue = isOverdue(a);
-        const bOverdue = isOverdue(b);
-        if (aOverdue && !bOverdue) return -1;
-        if (!aOverdue && bOverdue) return 1;
-        
-        // Then by priority (high to low)
-        const priorityOrder = { high: 3, medium: 2, low: 1 };
-        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-            return priorityOrder[b.priority] - priorityOrder[a.priority];
-        }
-        
-        // Then by due date (earliest first)
-        if (a.dueDate && b.dueDate) {
-            return new Date(a.dueDate) - new Date(b.dueDate);
-        }
-        if (a.dueDate) return -1;
-        if (b.dueDate) return 1;
-        
-        return 0;
-    });
-    
-    container.innerHTML = sortedTodos.map(todo => renderTodoItem(todo)).join('');
-    
-    // Add event listeners to the new elements
-    sortedTodos.forEach(todo => {
-        const checkbox = document.getElementById(`todo-checkbox-${todo.id}`);
-        const editBtn = document.getElementById(`todo-edit-${todo.id}`);
-        const deleteBtn = document.getElementById(`todo-delete-${todo.id}`);
-        
-        if (checkbox) {
-            checkbox.addEventListener('change', () => toggleTodoStatus(todo.id));
-        }
-        
-        if (editBtn) {
-            editBtn.addEventListener('click', () => openEditModal(todo.id));
-        }
-        
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
-        }
-    });
-}
 
-// Render a single todo item
-function renderTodoItem(todo) {
-    const company = COMPANIES[todo.company];
-    const priority = PRIORITIES[todo.priority];
-    const overdue = isOverdue(todo);
-    const statusClass = todo.status === 'done' ? 'status-done' : '';
-    const overdueClass = overdue ? 'border-danger border-2' : '';
-    
-    const dueDateText = todo.dueDate ? 
-        `<small class="text-muted"><i class="bi bi-calendar me-1"></i>${formatDate(todo.dueDate)}${overdue ? ' <span class="badge bg-danger">Overdue</span>' : ''}</small>` : 
-        '';
-    
-    const notesText = todo.notes ? 
-        `<small class="text-muted d-block mt-1"><i class="bi bi-chat-left-text me-1"></i>${todo.notes}</small>` : 
-        '';
-    
-    const projectText = todo.project ? 
-        `<span class="badge bg-info me-2"><i class="bi bi-folder me-1"></i>${todo.project}</span>` : 
-        '';
-    
-    return `
-        <div class="card mb-2 todo-item ${statusClass} ${overdueClass} company-${todo.company}">
-            <div class="card-body py-2">
-                <div class="d-flex align-items-start">
-                    <div class="form-check me-2 mt-1">
-                        <input class="form-check-input" type="checkbox" 
-                               id="todo-checkbox-${todo.id}" 
-                               ${todo.status === 'done' ? 'checked' : ''}>
-                    </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <span class="company-badge badge-${todo.company} me-2">
-                                    ${company.name}
-                                </span>
-                                <span class="${priority.class} px-2 py-1 rounded me-2">
-                                    <i class="${priority.icon} me-1"></i>${priority.name}
-                                </span>
-                                ${projectText}
-                            </div>
-                            <div>
-                                <button class="btn btn-sm btn-outline-primary me-1" id="todo-edit-${todo.id}" title="Edit task">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" id="todo-delete-${todo.id}" title="Delete task">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="mb-1 mt-2">${todo.description}</p>
-                        ${dueDateText}
-                        ${notesText}
-                        <small class="text-muted d-block mt-1">
-                            <i class="bi bi-clock me-1"></i>Created: ${formatDate(todo.createdAt)}
-                        </small>
-                    </div>
-                </div>
-            </div>
+    container.innerHTML = groups.map(g => `
+        <div class="group-lbl">
+            <span class="bar" style="background:${COMPANIES[g.company].color}"></span>
+            ${COMPANIES[g.company].name}
+            <span class="gcount">${g.items.length}</span>
         </div>
-    `;
+        ${g.items.map(renderTask).join('')}
+    `).join('');
+
+    // Wire up event handlers for rendered tasks
+    pending.forEach(t => wireTaskEvents(t.id));
 }
 
-// Add new todo
+function matchesProject(t) {
+    if (!activeProjectFilter) return true;
+    return (t.project || '') === activeProjectFilter;
+}
+
+function renderTask(t) {
+    const company = COMPANIES[t.company] || { name: t.company, color: '#888' };
+    const overdue = isOverdue(t);
+    const done = t.status === 'done';
+
+    const meta = [];
+    meta.push(`<span class="company-tag" style="background:${company.color}">${company.name}</span>`);
+    meta.push(`<span class="badge ${PRIORITIES[t.priority] ? PRIORITIES[t.priority].class : 'medium'}">${PRIORITIES[t.priority] ? PRIORITIES[t.priority].name : 'Media'}</span>`);
+    if (t.project) meta.push(`<span class="badge proj"><i class="bi bi-folder me-1"></i>${escapeHtml(t.project)}</span>`);
+    if (t.dueDate) {
+        meta.push(`<span class="badge ${overdue ? 'overdue' : 'date'}"><i class="bi bi-calendar me-1"></i>${formatDate(t.dueDate)}${overdue ? ' · Vencida' : ''}</span>`);
+    } else if (!done) {
+        meta.push(`<span class="badge nodate">Sin fecha</span>`);
+    }
+    if (t.notes) meta.push(`<span class="badge date"><i class="bi bi-chat-left-text me-1"></i>${escapeHtml(t.notes.length > 60 ? t.notes.slice(0, 60) + '…' : t.notes)}</span>`);
+
+    return `
+        <div class="task ${done ? 'done-item' : ''}" data-id="${t.id}">
+            <button class="ck ${done ? 'done' : ''}" data-action="toggle" title="Marcar completada"><i class="bi bi-check-lg"></i></button>
+            <div class="body">
+                <div class="t">${escapeHtml(t.description)}</div>
+                <div class="meta">${meta.join('')}</div>
+            </div>
+            <div class="actions">
+                <button data-action="edit" title="Editar"><i class="bi bi-pencil"></i></button>
+                <button data-action="delete" class="del" title="Eliminar"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>`;
+}
+
+function renderArchive() {
+    const listEl = document.getElementById('archive-list');
+    const countEl = document.getElementById('archive-count');
+    const fillEl = document.getElementById('archive-fill');
+    if (!listEl) return;
+
+    const completed = todos.filter(t => t.status === 'done');
+    const shown = completed.filter(t => matchesSearch(t) && matchesProject(t));
+
+    countEl.textContent = `${completed.length} tareas`;
+    if (fillEl) {
+        const pct = todos.length > 0 ? Math.round((completed.length / todos.length) * 100) : 0;
+        fillEl.style.width = pct + '%';
+    }
+
+    if (shown.length === 0) {
+        listEl.innerHTML = `<div class="empty-state" style="padding:16px;"><p style="font-size:13px;">Sin tareas completadas.</p></div>`;
+    } else {
+        listEl.innerHTML = shown.map(renderTask).join('');
+        shown.forEach(t => wireTaskEvents(t.id));
+    }
+}
+
+function renderProjects() {
+    const container = document.getElementById('projects-list');
+    const countEl = document.getElementById('proj-count');
+    if (!container) return;
+
+    // Aggregate tasks by project
+    const projMap = {};
+    todos.forEach(t => {
+        if (!t.project) return;
+        if (!projMap[t.project]) projMap[t.project] = { project: t.project, company: t.company, total: 0, pending: 0 };
+        projMap[t.project].total++;
+        if (t.status !== 'done') projMap[t.project].pending++;
+    });
+
+    const projects = Object.values(projMap).sort((a, b) => b.total - a.total);
+    countEl.textContent = String(projects.length);
+
+    if (projects.length === 0) {
+        container.innerHTML = `<div class="side-note">Sin proyectos todavía. Usa el campo "Proyecto" al añadir tareas para agruparlas.</div>`;
+        return;
+    }
+
+    container.innerHTML = projects.map(p => `
+        <button class="proj-row ${activeProjectFilter === p.project ? 'active' : ''}" data-project="${escapeHtml(p.project)}">
+            <span class="sw" style="background:${COMPANIES[p.company] ? COMPANIES[p.company].color : '#888'}"></span>
+            <span class="n">${escapeHtml(p.project)}</span>
+            ${p.pending > 0 ? `<span class="c pend">${p.pending} pend.</span>` : ''}
+            <span class="c">${p.total}</span>
+        </button>
+    `).join('');
+
+    container.querySelectorAll('.proj-row').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const proj = btn.getAttribute('data-project');
+            activeProjectFilter = (activeProjectFilter === proj) ? null : proj;
+            render();
+        });
+    });
+
+    renderFilterChip();
+}
+
+function renderFilterChip() {
+    const area = document.getElementById('filter-area');
+    if (!area) return;
+    if (activeProjectFilter) {
+        area.innerHTML = `<div class="filter-chip" id="clear-filter"><i class="bi bi-funnel-fill"></i> ${escapeHtml(activeProjectFilter)} <span class="x">✕</span></div>`;
+        const chip = document.getElementById('clear-filter');
+        if (chip) chip.addEventListener('click', () => { activeProjectFilter = null; render(); });
+    } else {
+        area.innerHTML = '';
+    }
+}
+
+function renderTodayLabel() {
+    const el = document.getElementById('today-label');
+    if (el) el.textContent = 'Hoy · ' + new Date().toLocaleDateString('es-DO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// ============================================================
+// TASK ACTIONS
+// ============================================================
+
 function addTodo(description, company, priority, dueDate = null, notes = '', project = '') {
+    if (!description.trim()) return null;
     const newTodo = {
         id: Date.now().toString(),
         description: description.trim(),
         company: company,
         priority: priority,
-        dueDate: dueDate,
+        dueDate: dueDate || null,
         notes: notes.trim(),
         project: project.trim(),
         status: 'pending',
         createdAt: new Date().toISOString().split('T')[0]
     };
-    
     todos.push(newTodo);
     saveTodos();
-    renderTodos();
-    updateStats();
-    
-    // Reset form
-    document.getElementById('add-todo-form').reset();
-    
+    render();
     return newTodo;
 }
 
-// Quick add task from header
-function addQuickTask() {
+function quickAdd() {
     const input = document.getElementById('quick-task');
-    const task = input.value.trim();
-    
-    if (task) {
-        addTodo(task, 'oorban', 'medium');
-        input.value = '';
-        input.focus();
-    }
+    const company = document.getElementById('quick-company').value;
+    const priority = document.getElementById('quick-priority').value;
+    if (!input.value.trim()) return;
+    addTodo(input.value, company, priority);
+    input.value = '';
+    input.focus();
+    // Remember last company for next time
+    localStorage.setItem('company-dashboard-last-company', company);
 }
 
-// Toggle todo status (pending/done)
 function toggleTodoStatus(todoId) {
     const todo = todos.find(t => t.id === todoId);
     if (todo) {
         todo.status = todo.status === 'done' ? 'pending' : 'done';
         saveTodos();
-        renderTodos();
-        updateStats();
+        render();
     }
 }
 
-// Delete todo
 function deleteTodo(todoId) {
-    if (confirm('Are you sure you want to delete this task?')) {
+    if (confirm('¿Eliminar esta tarea?')) {
         todos = todos.filter(t => t.id !== todoId);
         saveTodos();
-        renderTodos();
-        updateStats();
+        render();
     }
 }
 
-// Open edit modal
+function wireTaskEvents(todoId) {
+    const el = document.querySelector(`.task[data-id="${todoId}"]`);
+    if (!el) return;
+    el.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-action');
+            if (action === 'toggle') toggleTodoStatus(todoId);
+            else if (action === 'edit') openEditModal(todoId);
+            else if (action === 'delete') deleteTodo(todoId);
+        });
+    });
+}
+
+// ============================================================
+// EDIT MODAL
+// ============================================================
+
 function openEditModal(todoId) {
     const todo = todos.find(t => t.id === todoId);
     if (!todo) return;
-    
-    // Populate form fields
     document.getElementById('edit-task-id').value = todo.id;
     document.getElementById('edit-task-description').value = todo.description;
     document.getElementById('edit-task-company').value = todo.company;
@@ -353,19 +392,13 @@ function openEditModal(todoId) {
     document.getElementById('edit-task-status').value = todo.status;
     document.getElementById('edit-task-due-date').value = todo.dueDate || '';
     document.getElementById('edit-task-notes').value = todo.notes || '';
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('editTaskModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('editTaskModal')).show();
 }
 
-// Save edited todo
 function saveEditedTodo() {
     const todoId = document.getElementById('edit-task-id').value;
     const todo = todos.find(t => t.id === todoId);
     if (!todo) return;
-    
-    // Update todo properties
     todo.description = document.getElementById('edit-task-description').value.trim();
     todo.company = document.getElementById('edit-task-company').value;
     todo.priority = document.getElementById('edit-task-priority').value;
@@ -373,367 +406,119 @@ function saveEditedTodo() {
     todo.status = document.getElementById('edit-task-status').value;
     todo.dueDate = document.getElementById('edit-task-due-date').value || null;
     todo.notes = document.getElementById('edit-task-notes').value.trim();
-    
-    // Save and update
     saveTodos();
-    renderTodos();
-    updateStats();
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
-    modal.hide();
+    render();
+    bootstrap.Modal.getInstance(document.getElementById('editTaskModal')).hide();
 }
 
-// Delete from edit modal
 function deleteFromEditModal() {
     const todoId = document.getElementById('edit-task-id').value;
-    
-    if (confirm('Are you sure you want to delete this task?')) {
-        todos = todos.filter(t => t.id !== todoId);
-        saveTodos();
-        renderTodos();
-        updateStats();
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
-        modal.hide();
-    }
+    bootstrap.Modal.getInstance(document.getElementById('editTaskModal')).hide();
+    deleteTodo(todoId);
 }
 
-// Update dashboard statistics
+// ============================================================
+// STATS / STATUS
+// ============================================================
+
 function updateStats() {
     const total = todos.length;
-    const pending = todos.filter(t => t.status === 'pending').length;
+    const pending = todos.filter(t => t.status !== 'done').length;
+    const high = todos.filter(t => t.priority === 'high' && t.status !== 'done').length;
+    const overdue = todos.filter(t => isOverdue(t) && t.status !== 'done').length;
     const completed = todos.filter(t => t.status === 'done').length;
-    const highPriority = todos.filter(t => t.priority === 'high' && t.status === 'pending').length;
-    const overdue = todos.filter(t => isOverdue(t) && t.status === 'pending').length;
-    const completionPercentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    document.getElementById('total-todos').textContent = total;
-    document.getElementById('pending-todos').textContent = pending;
-    document.getElementById('completed-todos').textContent = completed;
-    document.getElementById('high-priority').textContent = highPriority;
-    document.getElementById('overdue-todos').textContent = overdue;
-    
-    // Update progress bar if it exists
-    const progressBar = document.getElementById('completion-progress');
-    if (progressBar) {
-        progressBar.style.width = `${completionPercentage}%`;
-        progressBar.setAttribute('aria-valuenow', completionPercentage);
-        progressBar.textContent = `${completionPercentage}%`;
-    }
-    
-    updateSystemMetrics();
+    const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('stat-pending', String(pending));
+    set('stat-high', String(high));
+    set('stat-overdue', String(overdue));
+    set('stat-complete', pct + '%');
+    set('stat-complete-n', String(completed));
 }
 
-// Update the System Status panel (replaces the stale "Loading metrics..." placeholder)
-function updateSystemMetrics() {
-    const el = document.getElementById('system-metrics');
+function updateSyncBadge() {
+    const el = document.getElementById('sync-badge');
     if (!el) return;
-    
-    const hasToken = !!getGitHubToken();
-    const rows = [
-        ['Data source', 'GitHub Pages (todos.json)'],
-        ['Tasks loaded', String(todos.length)],
-        ['GitHub token', hasToken ? '✅ Set (auto-sync ON)' : '⚠️ Not set — edits stay local only'],
-        ['Auto-sync', hasToken ? 'Every 2 min' : 'Disabled'],
-        ['Sync status', syncInProgress ? 'Syncing…' : 'Idle']
-    ];
-    
-    el.innerHTML = rows.map(([k, v]) => `
-        <div class="d-flex justify-content-between border-bottom py-1">
-            <span class="text-muted">${k}</span>
-            <span>${v}</span>
-        </div>`).join('');
-}
-
-// Check if a todo is overdue — parse YYYY-MM-DD as local time, not UTC
-function isOverdue(todo) {
-    if (!todo.dueDate || todo.status === 'done') return false;
-    const parts = todo.dueDate.split('-');
-    const dueDate = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return dueDate < today;
-}
-
-// Format date for display — parse YYYY-MM-DD as local time, not UTC
-function formatDate(dateString) {
-    if (!dateString) return '';
-    const parts = dateString.split('-');
-    const date = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-    return date.toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
-    });
-}
-
-// Update last sync time display
-function updateLastSync() {
-    const element = document.getElementById('last-sync');
-    if (element) {
-        const now = new Date();
-        const diffMs = now - lastSyncTime;
-        const diffMins = Math.floor(diffMs / 60000);
-        
-        if (diffMins < 1) {
-            element.textContent = 'Just now';
-        } else if (diffMins === 1) {
-            element.textContent = '1 minute ago';
-        } else if (diffMins < 60) {
-            element.textContent = `${diffMins} minutes ago`;
-        } else {
-            element.textContent = lastSyncTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
-    }
-}
-
-// GitHub Token Functions
-
-// Save GitHub token from input
-function saveGitHubToken() {
-    const tokenInput = document.getElementById('github-token');
-    if (tokenInput && tokenInput.value.trim()) {
-        const rawToken = tokenInput.value.trim();
-        // Skip if it's the masked placeholder display
-        if (rawToken === '••••••••••••••••••••') {
-            showSyncStatus('⚠️ Token already saved, enter a new one to replace it', 'warning');
-            return;
-        }
-        const cleanToken = sanitizeToken(rawToken);
-        if (!cleanToken) {
-            showSyncStatus('⚠️ Token contains only invalid characters', 'warning');
-            return;
-        }
-        setGitHubToken(cleanToken);
-        tokenInput.value = ''; // Clear for security
-        showSyncStatus('✅ GitHub token saved', 'success');
-        
-        // Auto-sync after saving token
-        setTimeout(() => syncWithGitHub(), 1000);
+    if (!getGitHubToken()) {
+        el.className = 'sync-badge off';
+        el.textContent = 'Sin token';
+    } else if (hasUnsavedChanges) {
+        el.className = 'sync-badge warn';
+        el.textContent = '⏳ Sincronizando…';
     } else {
-        showSyncStatus('⚠️ Please enter a token', 'warning');
+        el.className = 'sync-badge ok';
+        el.textContent = '✓ Sincronizado';
     }
 }
 
-// Load saved token into input (masked)
-function loadGitHubTokenToUI() {
-    const token = getGitHubToken();
-    const tokenInput = document.getElementById('github-token');
-    if (tokenInput && token) {
-        tokenInput.value = '••••••••••••••••••••'; // Masked display
-        tokenInput.placeholder = 'Token saved (click Sync Now)'; 
-    }
+function updateLastSync() {
+    // Keep for compatibility; sync badge now shows state instead of time.
 }
 
-// Toggle hide completed filter
-function toggleHideCompleted() {
-    hideCompleted = !hideCompleted;
-    
-    // Update toggle switch
-    const toggle = document.getElementById('hide-completed-toggle');
-    if (toggle) {
-        toggle.checked = hideCompleted;
-    }
-    
-    // Save preference to local storage
-    localStorage.setItem('company-dashboard-hide-completed', hideCompleted.toString());
-    
-    // Re-render todos
-    renderTodos();
-}
+// ============================================================
+// GITHUB TOKEN
+// ============================================================
 
-// Setup event listeners
-function setupEventListeners() {
-    // Add todo form
-    const form = document.getElementById('add-todo-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const description = document.getElementById('task-description').value;
-            const company = document.getElementById('task-company').value;
-            const priority = document.getElementById('task-priority').value;
-            const dueDate = document.getElementById('task-due-date').value || null;
-            const notes = document.getElementById('task-notes').value;
-            const project = document.getElementById('task-project').value;
-            
-            addTodo(description, company, priority, dueDate, notes, project);
-            
-            // Show success message
-            const button = form.querySelector('button[type="submit"]');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check2 me-2"></i>Added!';
-            button.classList.remove('btn-primary');
-            button.classList.add('btn-success');
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.classList.remove('btn-success');
-                button.classList.add('btn-primary');
-            }, 2000);
-        });
-    }
-    
-    // Quick add on Enter key
-    const quickTaskInput = document.getElementById('quick-task');
-    if (quickTaskInput) {
-        quickTaskInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addQuickTask();
-            }
-        });
-    }
-    
-    // Hide completed toggle
-    const hideCompletedToggle = document.getElementById('hide-completed-toggle');
-    if (hideCompletedToggle) {
-        // Load saved preference
-        const savedPreference = localStorage.getItem('company-dashboard-hide-completed');
-        if (savedPreference !== null) {
-            hideCompleted = savedPreference === 'true';
-            hideCompletedToggle.checked = hideCompleted;
-        }
-        
-        hideCompletedToggle.addEventListener('change', toggleHideCompleted);
-    }
-    
-    // Edit modal event listeners
-    const editSaveBtn = document.getElementById('edit-task-save');
-    if (editSaveBtn) {
-        editSaveBtn.addEventListener('click', saveEditedTodo);
-    }
-    
-    const editDeleteBtn = document.getElementById('edit-task-delete');
-    if (editDeleteBtn) {
-        editDeleteBtn.addEventListener('click', deleteFromEditModal);
-    }
-    
-    // Load sample data button (for testing)
-    const loadSampleBtn = document.createElement('button');
-    loadSampleBtn.className = 'btn btn-sm btn-outline-secondary d-none';
-    loadSampleBtn.innerHTML = '<i class="bi bi-download me-1"></i>Load Sample Data';
-    loadSampleBtn.onclick = loadSampleData;
-    
-    const footer = document.querySelector('.text-center');
-    if (footer) {
-        footer.appendChild(document.createElement('br'));
-        footer.appendChild(loadSampleBtn);
-    }
-}
-
-// Load sample data for testing
-function loadSampleData() {
-    const sampleTodos = [
-        {
-            id: '1',
-            description: 'Check LinkedIn Post 4 performance',
-            company: 'oorban',
-            priority: 'high',
-            dueDate: new Date().toISOString().split('T')[0],
-            notes: 'Narrative format only, no CTA',
-            status: 'pending',
-            createdAt: '2026-04-08'
-        },
-        {
-            id: '2',
-            description: 'MFC Project Stall Scan',
-            company: 'mfc',
-            priority: 'medium',
-            dueDate: '2026-04-09',
-            notes: 'Melia Punta Bergantín, Palma Real, Naves Comerciales Escar',
-            status: 'pending',
-            createdAt: '2026-04-08'
-        },
-        {
-            id: '3',
-            description: 'Legnofino Platform Decision',
-            company: 'legnofino',
-            priority: 'high',
-            dueDate: '2026-04-09',
-            notes: 'YES/NO on 4-6 week build',
-            status: 'pending',
-            createdAt: '2026-04-08'
-        },
-        {
-            id: '4',
-            description: 'Define Penalma Q2 2026 Targets',
-            company: 'penalma',
-            priority: 'medium',
-            dueDate: '2026-04-10',
-            notes: 'ETF contributions, liquidity buffer, deal pipeline',
-            status: 'pending',
-            createdAt: '2026-04-08'
-        },
-        {
-            id: '5',
-            description: 'Therapist Appointment',
-            company: 'personal',
-            priority: 'medium',
-            dueDate: '2026-04-09',
-            notes: '3pm AST',
-            status: 'pending',
-            createdAt: '2026-04-08'
-        }
-    ];
-    
-    todos = sampleTodos;
-    saveTodos();
-    renderTodos();
-    updateStats();
-    alert('Sample data loaded!');
-}
-
-// GitHub API Sync Functions
-
-// Get GitHub token from user or local storage
 function getGitHubToken() {
     if (githubToken) return githubToken;
-    
-    // Check local storage
-    const savedToken = localStorage.getItem('company-dashboard-github-token');
-    if (savedToken) {
-        githubToken = savedToken;
-        return githubToken;
-    }
-    
+    const saved = localStorage.getItem('company-dashboard-github-token');
+    if (saved) { githubToken = saved; return githubToken; }
     return null;
 }
 
-// Strip non-ISO-8859-1 chars from token (prevents fetch header errors)
 function sanitizeToken(token) {
     if (!token) return '';
     return token.replace(/[^\x00-\x7F]/g, '').trim();
 }
 
-// Set GitHub token
 function setGitHubToken(token) {
     githubToken = token;
     localStorage.setItem('company-dashboard-github-token', token);
-    console.log('GitHub token saved');
 }
 
-// Get file SHA (needed for updates)
+function saveGitHubToken() {
+    const input = document.getElementById('github-token');
+    if (input && input.value.trim()) {
+        const raw = input.value.trim();
+        if (raw === '••••••••••••••••••••') {
+            showSyncStatus('⚠️ El token ya está guardado. Pega uno nuevo para reemplazarlo.', 'warning');
+            return;
+        }
+        const clean = sanitizeToken(raw);
+        if (!clean) { showSyncStatus('⚠️ Token inválido', 'warning'); return; }
+        setGitHubToken(clean);
+        input.value = '';
+        updateSyncBadge();
+        showSyncStatus('✅ Token guardado', 'success');
+        setTimeout(() => syncWithGitHub(), 800);
+    } else {
+        showSyncStatus('⚠️ Pega un token', 'warning');
+    }
+}
+
+function loadGitHubTokenToUI() {
+    const input = document.getElementById('github-token');
+    if (input && getGitHubToken()) {
+        input.value = '••••••••••••••••••••';
+        input.placeholder = 'Token guardado';
+    }
+}
+
+// ============================================================
+// GITHUB SYNC
+// ============================================================
+
 async function getFileSha() {
     try {
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
-            {
-                headers: {
-                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
+            { headers: { 'Authorization': `token ${sanitizeToken(getGitHubToken())}`, 'Accept': 'application/vnd.github.v3+json' } }
         );
-        
         if (response.ok) {
             const data = await response.json();
             return data.sha;
         } else if (response.status === 404) {
-            // File doesn't exist yet
             return null;
         }
     } catch (error) {
@@ -742,22 +527,19 @@ async function getFileSha() {
     return null;
 }
 
-// Push todos to GitHub
 async function pushToGitHub() {
     if (syncInProgress) return;
     if (!getGitHubToken()) return;
-    
     syncInProgress = true;
-    
+    updateSyncBadge();
+
     try {
-        // Retry up to 2 times on 409 (SHA conflict) with a fresh SHA each time
         let pushed = false;
         for (let attempt = 0; attempt < 2 && !pushed; attempt++) {
             const sha = await getFileSha();
-            // UTF-8-safe base64 (btoa only handles Latin1)
             const jsonStr = JSON.stringify(todos, null, 2);
             const content = btoa(unescape(encodeURIComponent(jsonStr)));
-            
+
             const response = await fetch(
                 `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
                 {
@@ -767,24 +549,17 @@ async function pushToGitHub() {
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        message: `Auto-sync: ${new Date().toLocaleString()}`,
-                        content: content,
-                        sha: sha
-                    })
+                    body: JSON.stringify({ message: `Auto-sync: ${new Date().toLocaleString()}`, content, sha })
                 }
             );
-            
+
             if (response.ok) {
                 pushed = true;
                 hasUnsavedChanges = false;
                 console.log('Successfully pushed to GitHub');
-                lastSyncTime = new Date();
-                updateLastSync();
-                updateSystemMetrics();
+                updateSyncBadge();
                 showSyncStatus('✅ Synced to GitHub', 'success');
             } else if (response.status === 409 && attempt === 0) {
-                // Conflict: another write landed first. Re-fetch SHA and retry.
                 console.warn('409 conflict on push, retrying with fresh SHA…');
                 continue;
             } else {
@@ -792,9 +567,9 @@ async function pushToGitHub() {
                 try { const err = await response.json(); errMsg = err.message || ''; } catch (e) {}
                 console.error('GitHub push failed:', response.status, errMsg);
                 if (response.status === 401) {
-                    showSyncStatus('❌ Token inválido o expirado. Genera un token nuevo en github.com/settings/tokens y guárdalo.', 'danger');
+                    showSyncStatus('❌ Token inválido o expirado. Genera uno nuevo en github.com/settings/tokens.', 'danger');
                 } else if (response.status === 409) {
-                    showSyncStatus('⚠️ Conflicto de versión persistente. Haz "Pull from GitHub" y luego "Push".', 'warning');
+                    showSyncStatus('⚠️ Conflicto de versión. Haz "Pull" y luego "Push".', 'warning');
                 } else {
                     showSyncStatus(`❌ Sync failed (${response.status}${errMsg ? ': ' + errMsg : ''})`, 'danger');
                 }
@@ -805,165 +580,152 @@ async function pushToGitHub() {
         showSyncStatus('❌ Sync error', 'danger');
     } finally {
         syncInProgress = false;
+        updateSyncBadge();
     }
 }
 
-// Pull todos from GitHub
 async function pullFromGitHub() {
     if (syncInProgress) return;
     if (!getGitHubToken()) return;
-    
     syncInProgress = true;
-    
+
     try {
-        // Use GitHub API to get file content (supports auth)
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
-            {
-                headers: {
-                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
+            { headers: { 'Authorization': `token ${sanitizeToken(getGitHubToken())}`, 'Accept': 'application/vnd.github.v3+json' } }
         );
-        
+
         if (response.ok) {
             const data = await response.json();
-            // GitHub API returns base64 encoded content
-            // UTF-8-safe base64 decode (pair for btoa+encodeURIComponent)
             const content = decodeURIComponent(escape(atob(data.content)));
             const remoteTodos = JSON.parse(content);
-            
-            // Adopt remote as current state. Save to localStorage directly
-            // (NOT via saveTodos(), which would mark unsaved + trigger a push loop).
             todos = remoteTodos;
             localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
             hasUnsavedChanges = false;
-            
             console.log('Successfully pulled from GitHub');
-            lastSyncTime = new Date();
-            updateLastSync();
-            renderTodos();
-            updateStats();
+            updateSyncBadge();
+            render();
             showSyncStatus('✅ Synced from GitHub', 'success');
         } else {
-            const error = await response.json();
-            console.error('GitHub pull failed:', error);
-            showSyncStatus(`❌ Sync failed: ${error.message || response.status}`, 'danger');
+            let errMsg = '';
+            try { const err = await response.json(); errMsg = err.message || ''; } catch (e) {}
+            console.error('GitHub pull failed:', response.status, errMsg);
+            showSyncStatus(`❌ Sync failed (${response.status}${errMsg ? ': ' + errMsg : ''})`, 'danger');
         }
     } catch (error) {
         console.error('Error pulling from GitHub:', error);
         showSyncStatus('❌ Sync error', 'danger');
     } finally {
         syncInProgress = false;
+        updateSyncBadge();
     }
 }
 
-// Two-way sync
 async function syncWithGitHub() {
     if (!getGitHubToken()) {
-        showSyncStatus('⚠️ Set GitHub token to enable sync', 'warning');
+        showSyncStatus('⚠️ Guarda un token para activar el sync', 'warning');
         return;
     }
-    
     try {
-        // Push local changes FIRST (so we never overwrite unsaved edits with
-        // a stale remote copy), then pull to catch any other-device updates.
         if (hasUnsavedChanges) {
             await pushToGitHub();
         } else {
             await pullFromGitHub();
         }
-        updateSystemMetrics();
     } catch (error) {
         console.error('Sync error:', error);
         showSyncStatus(`❌ Sync error: ${error.message}`, 'danger');
     }
 }
 
-// Show sync status message
+// ============================================================
+// UI HELPERS
+// ============================================================
+
+function populateCompanySelects() {
+    const opts = Object.keys(COMPANIES).map(k =>
+        `<option value="${k}">${COMPANIES[k].name}</option>`
+    ).join('');
+    ['quick-company', 'edit-task-company'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = opts;
+    });
+    const lastCompany = localStorage.getItem('company-dashboard-last-company');
+    const quickSel = document.getElementById('quick-company');
+    if (quickSel && lastCompany && COMPANIES[lastCompany]) quickSel.value = lastCompany;
+}
+
+function setupEventListeners() {
+    // Quick add form
+    const form = document.getElementById('quick-form');
+    if (form) {
+        form.addEventListener('submit', e => { e.preventDefault(); quickAdd(); });
+    }
+
+    // Search
+    const search = document.getElementById('search-input');
+    if (search) {
+        search.addEventListener('input', () => { searchQuery = search.value; render(); });
+    }
+
+    // Ctrl/Cmd+K focuses search
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (search) search.focus();
+        }
+    });
+
+    // Archive toggle
+    const archiveToggle = document.getElementById('archive-toggle');
+    if (archiveToggle) {
+        archiveToggle.addEventListener('click', () => {
+            showArchive = !showArchive;
+            archiveToggle.classList.toggle('open', showArchive);
+            document.getElementById('archive-body').classList.toggle('open', showArchive);
+        });
+    }
+
+    // Edit modal
+    document.getElementById('edit-task-save').addEventListener('click', saveEditedTodo);
+    document.getElementById('edit-task-delete').addEventListener('click', deleteFromEditModal);
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function showSyncStatus(message, type = 'info') {
-    // Create or update status element
     let statusEl = document.getElementById('sync-status');
     if (!statusEl) {
         statusEl = document.createElement('div');
         statusEl.id = 'sync-status';
-        statusEl.className = 'alert alert-dismissible fade show';
         statusEl.style.position = 'fixed';
         statusEl.style.top = '70px';
         statusEl.style.right = '20px';
         statusEl.style.zIndex = '1000';
-        statusEl.style.maxWidth = '300px';
-        
-        const closeBtn = document.createElement('button');
-        closeBtn.type = 'button';
-        closeBtn.className = 'btn-close';
-        closeBtn.setAttribute('data-bs-dismiss', 'alert');
-        statusEl.appendChild(closeBtn);
-        
+        statusEl.style.maxWidth = '320px';
         document.body.appendChild(statusEl);
     }
-    
-    statusEl.className = `alert alert-${type} alert-dismissible fade show`;
-    statusEl.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-        if (statusEl && statusEl.parentNode) {
-            statusEl.remove();
-        }
-    }, 3000);
+    const colors = { success: 'var(--green)', danger: 'var(--red)', warning: 'var(--amber)', info: 'var(--accent-2)' };
+    statusEl.style.background = 'var(--card)';
+    statusEl.style.color = 'var(--text)';
+    statusEl.style.border = '1px solid ' + (colors[type] || colors.info);
+    statusEl.style.borderLeft = '4px solid ' + (colors[type] || colors.info);
+    statusEl.style.borderRadius = '8px';
+    statusEl.style.padding = '12px 16px';
+    statusEl.style.fontSize = '14px';
+    statusEl.style.boxShadow = '0 6px 20px rgba(0,0,0,.5)';
+    statusEl.textContent = message;
+
+    clearTimeout(window.statusTimeout);
+    window.statusTimeout = setTimeout(() => {
+        if (statusEl && statusEl.parentNode) statusEl.remove();
+    }, 3500);
 }
-
-// Initialize with some sample data if empty
-if (!localStorage.getItem('company-dashboard-todos')) {
-    setTimeout(loadSampleData, 1000);
-}
-
-// Theme Toggle Functions
-
-// Initialize theme
-function initTheme() {
-    const savedTheme = localStorage.getItem('company-dashboard-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    // Use saved theme, else system preference, else light
-    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-    
-    setTheme(theme);
-}
-
-// Set theme
-function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('company-dashboard-theme', theme);
-    
-    // Update icon
-    const icon = document.getElementById('theme-icon');
-    if (icon) {
-        icon.className = theme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
-    }
-    
-    // Update button title
-    const button = document.getElementById('theme-toggle');
-    if (button) {
-        button.title = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
-    }
-}
-
-// Toggle theme
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-}
-
-// Auto-sync every 2 minutes if token is set
-setInterval(() => {
-    if (getGitHubToken()) {
-        syncWithGitHub();
-    }
-}, 2 * 60 * 1000);

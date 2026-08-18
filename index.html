@@ -1,494 +1,311 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Company Dashboard - Nelson's Ventures</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --oorban: #4a6fa5;
-            --mfc: #6b8e23;
-            --legnofino: #d2691e;
-            --penalma: #8b4513;
-            --personal: #6a5acd;
-            
-            /* Light theme (default) */
-            --bg-color: #ffffff;
-            --text-color: #212529;
-            --card-bg: #ffffff;
-            --card-border: #dee2e6;
-            --header-bg: #343a40;
-            --input-bg: #ffffff;
-            --input-border: #ced4da;
-            --input-text: #212529;
-        }
-        
-        /* Dark theme */
-        [data-theme="dark"] {
-            --bg-color: #121212;
-            --text-color: #e9ecef;
-            --card-bg: #1e1e1e;
-            --card-border: #2d2d2d;
-            --header-bg: #0d1117;
-            --input-bg: #2d2d2d;
-            --input-border: #404040;
-            --input-text: #e9ecef;
-        }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-        .navbar {
-            background-color: var(--header-bg) !important;
-        }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-color);
-        }
-        
-        .form-control, .form-select {
-            background-color: var(--input-bg);
-            border-color: var(--input-border);
-            color: var(--input-text);
-        }
-        
-        .form-control:focus, .form-select:focus {
-            background-color: var(--input-bg);
-            border-color: var(--oorban);
-            color: var(--input-text);
-        }
-        
-        .company-oorban { border-left: 4px solid var(--oorban); }
-        .company-mfc { border-left: 4px solid var(--mfc); }
-        .company-legnofino { border-left: 4px solid var(--legnofino); }
-        .company-penalma { border-left: 4px solid var(--penalma); }
-        .company-personal { border-left: 4px solid var(--personal); }
-        
-        .priority-high { 
-            background-color: rgba(220, 53, 69, 0.2); 
-            color: #ff6b6b;
-        }
-        .priority-medium { 
-            background-color: rgba(255, 193, 7, 0.2); 
-            color: #ffd166;
-        }
-        .priority-low { 
-            background-color: rgba(40, 167, 69, 0.2); 
-            color: #51cf66;
-        }
-        
-        .status-done { 
-            opacity: 0.6; 
-            text-decoration: line-through;
-            background-color: rgba(108, 117, 125, 0.1);
-        }
-        
-        .todo-item { 
-            transition: all 0.2s; 
-            background-color: var(--card-bg);
-        }
-        
-        .todo-item:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .company-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .badge-oorban { background-color: var(--oorban); color: white; }
-        .badge-mfc { background-color: var(--mfc); color: white; }
-        .badge-legnofino { background-color: var(--legnofino); color: white; }
-        .badge-penalma { background-color: var(--penalma); color: white; }
-        .badge-personal { background-color: var(--personal); color: white; }
-        
-        .text-muted {
-            color: #6c757d !important;
-        }
-        
-        /* Theme toggle button */
-        .theme-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--oorban);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Company Dashboard — Nelson's Ventures</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #121212;
+    --card: #1e1e1e;
+    --card-2: #23262b;
+    --border: #2d2d2d;
+    --border-2: #3a414a;
+    --header: #0d1117;
+    --text: #e9ecef;
+    --muted: #8b949e;
+    --muted-2: #6e7681;
+    --input-bg: #21262d;
+    --accent: #4a6fa5;
+    --accent-2: #6f9bd6;
+    --green: #3fb950;
+    --red: #ff6b6b;
+    --amber: #ffd166;
+    --oorban: #4a6fa5;
+    --mfc: #6b8e23;
+    --legnofino: #d2691e;
+    --penalma: #8b4513;
+    --personal: #6a5acd;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  a { color: var(--accent-2); }
+
+  /* ===== NAVBAR ===== */
+  .navbar { background: var(--header); border-bottom: 1px solid #21262d; padding: 12px 24px; }
+  .brand { font-weight: 700; font-size: 17px; color: #fff; display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand:hover { color: #fff; }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+  .search-wrap { flex: 1; max-width: 440px; position: relative; }
+  .search-wrap input {
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border-2);
+    color: var(--text); border-radius: 8px; padding: 8px 14px 8px 36px; font-size: 14px;
+  }
+  .search-wrap input:focus { outline: none; border-color: var(--accent); }
+  .search-wrap .bi-search { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; }
+  .search-wrap .kbd { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted-2); font-size: 11px; border: 1px solid var(--border-2); border-radius: 4px; padding: 0 6px; }
+  .nav-right { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); }
+  .sync-badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid; }
+  .sync-badge.ok { background: #12291c; color: var(--green); border-color: #1f3d2b; }
+  .sync-badge.warn { background: #2d2613; color: var(--amber); border-color: #4a3f1e; }
+  .sync-badge.off { background: #2d1a1a; color: var(--red); border-color: #4a2525; }
+
+  /* ===== STATS ===== */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 20px 24px 0; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; }
+  .stat .num { font-size: 30px; font-weight: 800; line-height: 1; }
+  .stat .lbl { font-size: 12px; color: var(--muted); }
+  .stat .num.blue { color: var(--accent-2); }
+  .stat .num.red { color: var(--red); }
+  .stat .num.green { color: var(--green); }
+  .stat .num.amber { color: var(--amber); }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main { display: flex; gap: 20px; padding: 20px 24px 48px; align-items: flex-start; }
+  .col-left { flex: 1; min-width: 0; }
+  .col-right { width: 320px; flex-shrink: 0; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .card-hd { padding: 13px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .card-hd h2 { font-size: 15px; font-weight: 700; margin: 0; color: var(--text); }
+  .card-hd .count { background: var(--card-2); border-radius: 12px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
+
+  /* ===== QUICK ADD ===== */
+  .quickadd { display: flex; gap: 8px; padding: 10px 12px; border: 1px dashed var(--border-2); border-radius: 12px; background: var(--card); align-items: center; margin-bottom: 6px; }
+  .quickadd .plus { width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .quickadd input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text); font-size: 14px; padding: 4px 6px; }
+  .quickadd input[type="text"]:focus { outline: none; }
+  .quickadd input[type="text"]::placeholder { color: var(--muted); }
+  .quickadd select { background: var(--card-2); color: var(--text); border: 1px solid var(--border-2); border-radius: 8px; font-size: 12px; padding: 5px 8px; }
+  .quickadd .btn-add { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+  .quickadd .btn-add:hover { background: #5878a8; }
+
+  /* ===== FOCUS LIST ===== */
+  .group-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
+  .group-lbl .bar { width: 3px; height: 14px; border-radius: 2px; display: inline-block; }
+  .group-lbl .gcount { color: var(--muted-2); font-weight: 600; }
+  .task { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; background: var(--card); }
+  .task:hover { border-color: var(--border-2); }
+  .task.done-item { opacity: .55; }
+  .task.done-item .t { text-decoration: line-through; }
+  .ck { width: 20px; height: 20px; border: 2px solid #484f58; border-radius: 6px; margin-top: 2px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; background: transparent; padding: 0; }
+  .ck.done { background: var(--green); border-color: var(--green); }
+  .task .body { flex: 1; min-width: 0; }
+  .task .t { font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .task .meta { display: flex; gap: 7px; align-items: center; margin-top: 7px; flex-wrap: wrap; }
+  .task .actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .task .actions button { background: transparent; border: none; color: var(--muted); font-size: 15px; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .task .actions button:hover { color: var(--text); background: var(--card-2); }
+  .task .actions button.del:hover { color: var(--red); }
+
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 6px; }
+  .badge.high { background: #2d1a1a; color: var(--red); border: 1px solid #4a2525; }
+  .badge.medium { background: #2d2613; color: var(--amber); border: 1px solid #4a3f1e; }
+  .badge.low { background: #12291c; color: var(--green); border: 1px solid #1f3d2b; }
+  .badge.proj { background: #182433; color: var(--accent-2); border: 1px solid #23405e; }
+  .badge.date { background: var(--card-2); color: var(--muted); }
+  .badge.nodate { background: #2d2613; color: var(--amber); border: 1px solid #4a3f1e; }
+  .badge.overdue { background: #2d1a1a; color: var(--red); border: 1px solid #4a2525; font-weight: 700; }
+  .company-tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; color: #fff; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .bi { font-size: 40px; display: block; margin-bottom: 10px; opacity: .5; }
+
+  .filter-chip { display: inline-flex; align-items: center; gap: 8px; background: #182433; border: 1px solid #23405e; color: var(--accent-2); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600; margin: 12px 0 0; cursor: pointer; }
+  .filter-chip .x { font-weight: 700; }
+
+  /* ===== ARCHIVE ===== */
+  .archive-toggle { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 600; background: var(--card); cursor: pointer; user-select: none; }
+  .archive-toggle:hover { border-color: var(--border-2); }
+  .archive-toggle .chev { margin-left: auto; color: var(--muted-2); transition: transform .2s; }
+  .archive-toggle.open .chev { transform: rotate(90deg); }
+  .archive-bar { height: 6px; background: var(--card-2); border-radius: 3px; width: 120px; overflow: hidden; }
+  .archive-bar .fill { height: 100%; background: var(--green); border-radius: 3px; }
+  #archive-body { display: none; padding-top: 10px; }
+  #archive-body.open { display: block; }
+
+  /* ===== SIDEBAR ===== */
+  .side-hd { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 13px 18px 4px; }
+  .proj-row { padding: 9px 18px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer; border: none; background: transparent; width: 100%; text-align: left; }
+  .proj-row:hover { background: var(--card-2); }
+  .proj-row.active { background: #182433; }
+  .proj-row .sw { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .proj-row .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .proj-row .c { color: var(--muted); font-size: 12px; font-weight: 600; }
+  .proj-row .c.pend { color: var(--amber); }
+  .side-note { font-size: 11px; color: var(--muted-2); padding: 8px 18px 16px; }
+
+  .token-input { display: flex; gap: 6px; }
+  .token-input input { flex: 1; background: var(--input-bg); border: 1px solid var(--border-2); color: var(--text); border-radius: 8px; padding: 7px 10px; font-size: 13px; }
+  .token-input input:focus { outline: none; border-color: var(--accent); }
+  .btn-sync { width: 100%; margin-bottom: 6px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .col-right { width: 100%; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .search-wrap { max-width: none; }
+    .navbar { flex-wrap: wrap; }
+  }
+</style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-kanban-fill me-2"></i>
-                Company Dashboard
-            </a>
-            <div class="text-light">
-                <small>Last sync: <span id="last-sync">Just now</span></small>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container mt-4">
-        <!-- Dashboard Header -->
-        <div class="row mb-4">
-            <div class="col">
-                <h1><i class="bi bi-building me-2"></i>Cross-Company Todo Dashboard</h1>
-                <p class="text-muted">Track tasks across Oorban, MFC Arquitectos, Legnofino, Penalma Capital, and Personal</p>
-            </div>
-        </div>
+  <nav class="navbar">
+    <a class="brand" href="#"><span class="dot"></span>Company Dashboard</a>
+    <div class="search-wrap">
+      <i class="bi bi-search"></i>
+      <input type="text" id="search-input" placeholder="Buscar en todas las tareas…" autocomplete="off">
+      <span class="kbd">Ctrl K</span>
+    </div>
+    <div class="nav-right">
+      <span id="today-label"></span>
+      <span class="sync-badge off" id="sync-badge">Sin token</span>
+    </div>
+  </nav>
 
-        <!-- Stats Overview -->
-        <div class="row mb-4">
-            <div class="col-md-2 col-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="total-todos">0</h5>
-                        <p class="card-text text-muted">Total Tasks</p>
-                    </div>
-                </div>
+  <div class="stats">
+    <div class="stat"><div class="num blue" id="stat-pending">0</div><div class="lbl">Pendientes hoy</div></div>
+    <div class="stat"><div class="num red" id="stat-high">0</div><div class="lbl">Alta prioridad</div></div>
+    <div class="stat"><div class="num amber" id="stat-overdue">0</div><div class="lbl">Vencidas</div></div>
+    <div class="stat"><div class="num green" id="stat-complete">0%</div><div class="lbl">Completadas (<span id="stat-complete-n">0</span>)</div></div>
+  </div>
+
+  <div class="main">
+    <div class="col-left">
+      <!-- QUICK ADD -->
+      <form class="quickadd" id="quick-form">
+        <span class="plus">+</span>
+        <input type="text" id="quick-task" placeholder="¿Qué sigue? Escribe y presiona Enter…" autocomplete="off">
+        <select id="quick-company" title="Empresa"></select>
+        <select id="quick-priority" title="Prioridad">
+          <option value="high">Alta</option>
+          <option value="medium" selected>Media</option>
+          <option value="low">Baja</option>
+        </select>
+        <button type="submit" class="btn-add">Añadir</button>
+      </form>
+
+      <!-- ACTIVE PROJECT FILTER CHIP -->
+      <div id="filter-area"></div>
+
+      <!-- PENDING TASKS (Focus view) -->
+      <div id="focus-list"></div>
+
+      <!-- ARCHIVE -->
+      <div class="archive-toggle" id="archive-toggle">
+        <span>📦 Archivo — completadas</span>
+        <span class="archive-bar"><span class="fill" id="archive-fill"></span></span>
+        <span id="archive-count">0 tareas</span>
+        <span class="chev">▸</span>
+      </div>
+      <div id="archive-body"><div id="archive-list"></div></div>
+    </div>
+
+    <div class="col-right">
+      <!-- PROJECTS -->
+      <div class="card">
+        <div class="card-hd"><h2>Proyectos activos</h2><span class="count" id="proj-count">0</span></div>
+        <div id="projects-list"></div>
+        <div class="side-note">Clic en un proyecto para filtrar</div>
+      </div>
+
+      <!-- GITHUB SYNC -->
+      <div class="card">
+        <div class="card-hd"><h2><i class="bi bi-github me-1"></i>GitHub Sync</h2></div>
+        <div style="padding:14px 18px;">
+          <label class="form-label" style="font-size:12px;color:var(--muted);">Personal Access Token</label>
+          <div class="token-input">
+            <input type="password" id="github-token" placeholder="ghp_..." autocomplete="off">
+            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="saveGitHubToken()" title="Guardar token"><i class="bi bi-save"></i></button>
+          </div>
+          <small style="color:var(--muted-2);font-size:11px;">
+            Crea uno en <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> (scope <code>repo</code>)
+          </small>
+          <div class="mt-2">
+            <button class="btn btn-primary btn-sync" onclick="syncWithGitHub()"><i class="bi bi-arrow-repeat me-1"></i>Sync Now</button>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="pullFromGitHub()"><i class="bi bi-download me-1"></i>Pull</button>
+              <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="pushToGitHub()"><i class="bi bi-upload me-1"></i>Push</button>
             </div>
-            <div class="col-md-2 col-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="pending-todos">0</h5>
-                        <p class="card-text text-muted">Pending</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 col-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="completed-todos">0</h5>
-                        <p class="card-text text-muted">Completed</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 col-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="high-priority">0</h5>
-                        <p class="card-text text-muted">High Priority</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 col-6">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="overdue-todos">0</h5>
-                        <p class="card-text text-muted">Overdue</p>
-                    </div>
-                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT TASK MODAL -->
+  <div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" style="background:var(--card);color:var(--text);border:1px solid var(--border);">
+        <div class="modal-header" style="border-color:var(--border);">
+          <h5 class="modal-title">Editar tarea</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="edit-task-id">
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" id="edit-task-description" rows="2" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);"></textarea>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label">Empresa</label>
+              <select class="form-select" id="edit-task-company" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);"></select>
             </div>
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h6 class="card-title">Completion Progress</h6>
-                        <div class="progress mb-2" style="height: 20px;">
-                            <div id="completion-progress" class="progress-bar bg-success" 
-                                 role="progressbar" style="width: 0%" 
-                                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                0%
-                            </div>
-                        </div>
-                        <h6 class="card-title mt-3">Quick Add</h6>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="quick-task" placeholder="New task...">
-                            <button class="btn btn-primary" onclick="addQuickTask()">
-                                <i class="bi bi-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+              <label class="form-label">Prioridad</label>
+              <select class="form-select" id="edit-task-priority" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);">
+                <option value="high">Alta</option>
+                <option value="medium">Media</option>
+                <option value="low">Baja</option>
+              </select>
             </div>
+            <div class="col-md-4">
+              <label class="form-label">Estado</label>
+              <select class="form-select" id="edit-task-status" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);">
+                <option value="pending">Pendiente</option>
+                <option value="done">Completada</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Proyecto (opcional)</label>
+              <input type="text" class="form-control" id="edit-task-project" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Fecha (opcional)</label>
+              <input type="date" class="form-control" id="edit-task-due-date" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notas (opcional)</label>
+            <textarea class="form-control" id="edit-task-notes" rows="2" style="background:var(--input-bg);border-color:var(--border-2);color:var(--text);"></textarea>
+          </div>
         </div>
-
-        <!-- Main Content -->
-        <div class="row">
-            <!-- Todo List -->
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs" id="companyTabs">
-                            <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#all">All Companies</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#oorban">Oorban</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mfc">MFC</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#legnofino">Legnofino</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#penalma">Penalma</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#personal">Personal</button>
-                            </li>
-                        </ul>
-                    </div>
-                        <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div></div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="hide-completed-toggle">
-                                <label class="form-check-label" for="hide-completed-toggle">
-                                    <i class="bi bi-eye-slash me-1"></i>Hide Completed Tasks
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="all">
-                                <div id="todo-list-all"></div>
-                            </div>
-                            <div class="tab-pane fade" id="oorban">
-                                <div id="todo-list-oorban"></div>
-                            </div>
-                            <div class="tab-pane fade" id="mfc">
-                                <div id="todo-list-mfc"></div>
-                            </div>
-                            <div class="tab-pane fade" id="legnofino">
-                                <div id="todo-list-legnofino"></div>
-                            </div>
-                            <div class="tab-pane fade" id="penalma">
-                                <div id="todo-list-penalma"></div>
-                            </div>
-                            <div class="tab-pane fade" id="personal">
-                                <div id="todo-list-personal"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Add Todo & Filters -->
-            <div class="col-lg-4">
-                <!-- Add Todo Form -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Add New Task</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="add-todo-form">
-                            <div class="mb-3">
-                                <label class="form-label">Task Description</label>
-                                <textarea class="form-control" id="task-description" rows="2" required></textarea>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Company</label>
-                                    <select class="form-select" id="task-company" required>
-                                        <option value="oorban">Oorban (ROMULENS/PARKEADO)</option>
-                                        <option value="mfc">MFC Arquitectos</option>
-                                        <option value="legnofino">Legnofino</option>
-                                        <option value="penalma">Penalma Capital</option>
-                                        <option value="personal">Personal</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Priority</label>
-                                    <select class="form-select" id="task-priority" required>
-                                        <option value="low">Low</option>
-                                        <option value="medium" selected>Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Project (Optional)</label>
-                                    <input type="text" class="form-control" id="task-project" placeholder="e.g., ROMULENS LinkedIn">
-                                    <small class="text-muted">Group related tasks</small>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Due Date (optional)</label>
-                                <input type="date" class="form-control" id="task-due-date">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Notes (optional)</label>
-                                <textarea class="form-control" id="task-notes" rows="2"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-save me-2"></i>Add Task
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- GitHub Sync -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-github me-2"></i>GitHub Sync</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">GitHub Personal Access Token</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="github-token" placeholder="ghp_...">
-                                <button class="btn btn-outline-secondary" type="button" onclick="saveGitHubToken()">
-                                    <i class="bi bi-save"></i>
-                                </button>
-                            </div>
-                            <small class="text-muted">
-                                Create at: <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a><br>
-                                Required scopes: <code>repo</code>
-                            </small>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-primary" onclick="syncWithGitHub()">
-                                <i class="bi bi-arrow-repeat me-2"></i>Sync Now
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="pullFromGitHub()">
-                                <i class="bi bi-download me-2"></i>Pull from GitHub
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="pushToGitHub()">
-                                <i class="bi bi-upload me-2"></i>Push to GitHub
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Metrics -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>System Status</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="system-metrics">
-                            <p class="text-muted">Loading metrics...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-footer" style="border-color:var(--border);">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="edit-task-delete">Eliminar</button>
+          <button type="button" class="btn btn-primary" id="edit-task-save">Guardar</button>
         </div>
-
-        <!-- Footer -->
-        <div class="row mt-4">
-            <div class="col">
-                <div class="text-center text-muted">
-                    <small>
-                        Dashboard for Nelson's Ventures | 
-                        <a href="https://github.com/blead87/company-dashboard" target="_blank">
-                            <i class="bi bi-github me-1"></i>GitHub Repo
-                        </a> | 
-                        Auto-sync every 5 minutes
-                    </small>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Edit Task Modal -->
-    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="edit-todo-form">
-                        <input type="hidden" id="edit-task-id">
-                        <div class="mb-3">
-                            <label class="form-label">Task Description</label>
-                            <textarea class="form-control" id="edit-task-description" rows="2" required></textarea>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Company</label>
-                                <select class="form-select" id="edit-task-company" required>
-                                    <option value="oorban">Oorban (ROMULENS/PARKEADO)</option>
-                                    <option value="mfc">MFC Arquitectos</option>
-                                    <option value="legnofino">Legnofino</option>
-                                    <option value="penalma">Penalma Capital</option>
-                                    <option value="personal">Personal</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Priority</label>
-                                <select class="form-select" id="edit-task-priority" required>
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Project (Optional)</label>
-                                <input type="text" class="form-control" id="edit-task-project" placeholder="e.g., ROMULENS LinkedIn">
-                                <small class="text-muted">Group related tasks</small>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" id="edit-task-status" required>
-                                    <option value="pending">Pending</option>
-                                    <option value="done">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Due Date (optional)</label>
-                            <input type="date" class="form-control" id="edit-task-due-date">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notes (optional)</label>
-                            <textarea class="form-control" id="edit-task-notes" rows="2"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="edit-task-delete">Delete Task</button>
-                    <button type="button" class="btn btn-primary" id="edit-task-save">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" id="theme-toggle" title="Toggle dark/light theme">
-        <i class="bi bi-moon" id="theme-icon"></i>
-    </button>
-
-    <!-- JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="dashboard.js?v=20260818b"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="dashboard.js?v=20260818c"></script>
 </body>
 </html>

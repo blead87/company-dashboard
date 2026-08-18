@@ -129,7 +129,7 @@
     "dueDate": "2026-06-26",
     "notes": "",
     "project": "",
-    "status": "done",
+    "status": "pending",
     "createdAt": "2026-04-11"
   },
   {
@@ -602,7 +602,7 @@
     "dueDate": "2026-05-26",
     "notes": "Hay una diferencia entre el layout y la tabla de mobiliario. Verificar y confirmar.",
     "project": "Melia Caribe Beach MCB",
-    "status": "done",
+    "status": "pending",
     "createdAt": "2026-05-22"
   },
   {
@@ -648,5 +648,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-06-16"
+  },
+  {
+    "id": "1787073655579",
+    "description": "Comprar llavines y bisagras doradas",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "Secrets Macao",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

@@ -659,5 +659,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787074441336",
+    "description": "Compra de llavines dorados",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "Secrets Macao",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

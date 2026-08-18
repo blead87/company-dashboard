@@ -681,5 +681,16 @@
     "project": "Secrets Macao",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787074474067",
+    "description": "Compra de tiradores",
+    "company": "legnofino",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "Secrets Macao",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

@@ -714,5 +714,16 @@
     "project": "",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787075249018",
+    "description": "Propuesta layouts PB",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

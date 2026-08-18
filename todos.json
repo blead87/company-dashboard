@@ -670,5 +670,16 @@
     "project": "Secrets Macao",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787074457401",
+    "description": "Compra de zocalos aluminio negro mate",
+    "company": "oorban",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "Secrets Macao",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

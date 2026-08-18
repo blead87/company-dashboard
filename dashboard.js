@@ -20,6 +20,7 @@ let lastSyncTime = new Date();
 let hideCompleted = false;
 let syncInProgress = false;
 let githubToken = null;
+let hasUnsavedChanges = false; // true when local edits exist that haven't been pushed yet
 const REPO_OWNER = 'blead87';
 const REPO_NAME = 'company-dashboard';
 const TODOS_FILE_PATH = 'todos.json';
@@ -51,14 +52,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Load todos from GitHub (or local storage as fallback)
 async function loadTodos() {
+    // CRITICAL: if there are unsaved local edits, do NOT overwrite them with
+    // remote data (which may be stale). Just re-render what we already have.
+    if (hasUnsavedChanges) {
+        renderTodos();
+        updateStats();
+        return;
+    }
+
     try {
-        // Try to load from GitHub
-        const response = await fetch('https://blead87.github.io/company-dashboard/todos.json?' + Date.now());
-        if (response.ok) {
-            todos = await response.json();
-            console.log('Loaded todos from GitHub:', todos.length);
+        let loaded = null;
+        const token = getGitHubToken();
+
+        // If a token is set, read from the GitHub API (authoritative, always fresh).
+        if (token) {
+            try {
+                const resp = await fetch(
+                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
+                    { headers: { 'Authorization': `token ${sanitizeToken(token)}`, 'Accept': 'application/vnd.github.v3+json' } }
+                );
+                if (resp.ok) {
+                    const data = await resp.json();
+                    loaded = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                    console.log('Loaded todos from GitHub API:', loaded.length);
+                }
+            } catch (e) {
+                console.log('API load failed, falling back:', e.message);
+            }
+        }
+
+        // Fallback: GitHub Pages static file (works without token)
+        if (loaded === null) {
+            const response = await fetch('https://blead87.github.io/company-dashboard/todos.json?' + Date.now());
+            if (response.ok) {
+                loaded = await response.json();
+                console.log('Loaded todos from GitHub Pages:', loaded.length);
+            }
+        }
+
+        if (loaded !== null) {
+            todos = loaded;
+            localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
         } else {
-            // Fallback to local storage
             const saved = localStorage.getItem('company-dashboard-todos');
             if (saved) {
                 todos = JSON.parse(saved);
@@ -84,17 +119,20 @@ function saveTodos() {
     // Save to local storage
     localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
     
+    // Mark that we have local edits not yet pushed to GitHub
+    hasUnsavedChanges = true;
+    
     // Update last sync time
     lastSyncTime = new Date();
     updateLastSync();
     
     // Auto-push to GitHub if token is set
     if (getGitHubToken()) {
-        // Debounce: wait 1 second before pushing to avoid rapid API calls
+        // Debounce: wait 500ms before pushing to avoid rapid API calls
         clearTimeout(window.saveTimeout);
         window.saveTimeout = setTimeout(() => {
             pushToGitHub();
-        }, 1000);
+        }, 500);
     }
 }
 
@@ -712,43 +750,54 @@ async function pushToGitHub() {
     syncInProgress = true;
     
     try {
-        const sha = await getFileSha();
-        // UTF-8-safe base64 (btoa only handles Latin1)
-        const jsonStr = JSON.stringify(todos, null, 2);
-        const content = btoa(unescape(encodeURIComponent(jsonStr)));
-        
-        const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Auto-sync: ${new Date().toLocaleString()}`,
-                    content: content,
-                    sha: sha
-                })
-            }
-        );
-        
-        if (response.ok) {
-            console.log('Successfully pushed to GitHub');
-            lastSyncTime = new Date();
-            updateLastSync();
-            showSyncStatus('✅ Synced to GitHub', 'success');
-        } else {
-            let errMsg = '';
-            try { const err = await response.json(); errMsg = err.message || ''; } catch (e) {}
-            console.error('GitHub push failed:', response.status, errMsg);
-            if (response.status === 401) {
-                showSyncStatus('❌ Token inválido o expirado. Genera un token nuevo en github.com/settings/tokens y guárdalo.', 'danger');
-            } else if (response.status === 409) {
-                showSyncStatus('⚠️ Conflicto de versión (409). Haz "Pull from GitHub" y luego "Push".', 'warning');
+        // Retry up to 2 times on 409 (SHA conflict) with a fresh SHA each time
+        let pushed = false;
+        for (let attempt = 0; attempt < 2 && !pushed; attempt++) {
+            const sha = await getFileSha();
+            // UTF-8-safe base64 (btoa only handles Latin1)
+            const jsonStr = JSON.stringify(todos, null, 2);
+            const content = btoa(unescape(encodeURIComponent(jsonStr)));
+            
+            const response = await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${TODOS_FILE_PATH}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${sanitizeToken(getGitHubToken())}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Auto-sync: ${new Date().toLocaleString()}`,
+                        content: content,
+                        sha: sha
+                    })
+                }
+            );
+            
+            if (response.ok) {
+                pushed = true;
+                hasUnsavedChanges = false;
+                console.log('Successfully pushed to GitHub');
+                lastSyncTime = new Date();
+                updateLastSync();
+                updateSystemMetrics();
+                showSyncStatus('✅ Synced to GitHub', 'success');
+            } else if (response.status === 409 && attempt === 0) {
+                // Conflict: another write landed first. Re-fetch SHA and retry.
+                console.warn('409 conflict on push, retrying with fresh SHA…');
+                continue;
             } else {
-                showSyncStatus(`❌ Sync failed (${response.status}${errMsg ? ': ' + errMsg : ''})`, 'danger');
+                let errMsg = '';
+                try { const err = await response.json(); errMsg = err.message || ''; } catch (e) {}
+                console.error('GitHub push failed:', response.status, errMsg);
+                if (response.status === 401) {
+                    showSyncStatus('❌ Token inválido o expirado. Genera un token nuevo en github.com/settings/tokens y guárdalo.', 'danger');
+                } else if (response.status === 409) {
+                    showSyncStatus('⚠️ Conflicto de versión persistente. Haz "Pull from GitHub" y luego "Push".', 'warning');
+                } else {
+                    showSyncStatus(`❌ Sync failed (${response.status}${errMsg ? ': ' + errMsg : ''})`, 'danger');
+                }
             }
         }
     } catch (error) {
@@ -785,10 +834,11 @@ async function pullFromGitHub() {
             const content = decodeURIComponent(escape(atob(data.content)));
             const remoteTodos = JSON.parse(content);
             
-            // Simple conflict resolution: remote wins if newer
-            // In a real app, you'd want more sophisticated merging
+            // Adopt remote as current state. Save to localStorage directly
+            // (NOT via saveTodos(), which would mark unsaved + trigger a push loop).
             todos = remoteTodos;
-            saveTodos(); // Save to local storage
+            localStorage.setItem('company-dashboard-todos', JSON.stringify(todos));
+            hasUnsavedChanges = false;
             
             console.log('Successfully pulled from GitHub');
             lastSyncTime = new Date();
@@ -817,10 +867,14 @@ async function syncWithGitHub() {
     }
     
     try {
-        // First pull, then push (simple strategy)
-        await pullFromGitHub();
-        await pushToGitHub();
-        showSyncStatus('✅ Synced successfully!', 'success');
+        // Push local changes FIRST (so we never overwrite unsaved edits with
+        // a stale remote copy), then pull to catch any other-device updates.
+        if (hasUnsavedChanges) {
+            await pushToGitHub();
+        } else {
+            await pullFromGitHub();
+        }
+        updateSystemMetrics();
     } catch (error) {
         console.error('Sync error:', error);
         showSyncStatus(`❌ Sync error: ${error.message}`, 'danger');

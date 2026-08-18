@@ -384,6 +384,29 @@ function updateStats() {
         progressBar.setAttribute('aria-valuenow', completionPercentage);
         progressBar.textContent = `${completionPercentage}%`;
     }
+    
+    updateSystemMetrics();
+}
+
+// Update the System Status panel (replaces the stale "Loading metrics..." placeholder)
+function updateSystemMetrics() {
+    const el = document.getElementById('system-metrics');
+    if (!el) return;
+    
+    const hasToken = !!getGitHubToken();
+    const rows = [
+        ['Data source', 'GitHub Pages (todos.json)'],
+        ['Tasks loaded', String(todos.length)],
+        ['GitHub token', hasToken ? '✅ Set (auto-sync ON)' : '⚠️ Not set — edits stay local only'],
+        ['Auto-sync', hasToken ? 'Every 2 min' : 'Disabled'],
+        ['Sync status', syncInProgress ? 'Syncing…' : 'Idle']
+    ];
+    
+    el.innerHTML = rows.map(([k, v]) => `
+        <div class="d-flex justify-content-between border-bottom py-1">
+            <span class="text-muted">${k}</span>
+            <span>${v}</span>
+        </div>`).join('');
 }
 
 // Check if a todo is overdue — parse YYYY-MM-DD as local time, not UTC
@@ -717,9 +740,16 @@ async function pushToGitHub() {
             updateLastSync();
             showSyncStatus('✅ Synced to GitHub', 'success');
         } else {
-            const error = await response.json();
-            console.error('GitHub push failed:', error);
-            showSyncStatus('❌ Sync failed', 'danger');
+            let errMsg = '';
+            try { const err = await response.json(); errMsg = err.message || ''; } catch (e) {}
+            console.error('GitHub push failed:', response.status, errMsg);
+            if (response.status === 401) {
+                showSyncStatus('❌ Token inválido o expirado. Genera un token nuevo en github.com/settings/tokens y guárdalo.', 'danger');
+            } else if (response.status === 409) {
+                showSyncStatus('⚠️ Conflicto de versión (409). Haz "Pull from GitHub" y luego "Push".', 'warning');
+            } else {
+                showSyncStatus(`❌ Sync failed (${response.status}${errMsg ? ': ' + errMsg : ''})`, 'danger');
+            }
         }
     } catch (error) {
         console.error('Error pushing to GitHub:', error);

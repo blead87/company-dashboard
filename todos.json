@@ -692,5 +692,16 @@
     "project": "Secrets Macao",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787074960466",
+    "description": "Arreglar el lavaplatos",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

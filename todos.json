@@ -648,5 +648,16 @@
     "project": "",
     "status": "done",
     "createdAt": "2026-06-16"
+  },
+  {
+    "id": "1787074384073",
+    "description": "Confirmar status de la Changan y fecha de entrega",
+    "company": "personal",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-08-18"
   }
 ]

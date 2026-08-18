@@ -129,7 +129,7 @@
     "dueDate": "2026-06-26",
     "notes": "",
     "project": "",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-04-11"
   },
   {
@@ -602,7 +602,7 @@
     "dueDate": "2026-05-26",
     "notes": "Hay una diferencia entre el layout y la tabla de mobiliario. Verificar y confirmar.",
     "project": "Melia Caribe Beach MCB",
-    "status": "pending",
+    "status": "done",
     "createdAt": "2026-05-22"
   },
   {

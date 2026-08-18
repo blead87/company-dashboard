@@ -481,7 +481,7 @@
     "dueDate": null,
     "notes": "",
     "project": "",
-    "status": "done",
+    "status": "pending",
     "createdAt": "2026-05-11"
   },
   {
@@ -646,18 +646,7 @@
     "dueDate": null,
     "notes": "",
     "project": "",
-    "status": "done",
-    "createdAt": "2026-06-16"
-  },
-  {
-    "id": "1787073655579",
-    "description": "Comprar llavines y bisagras doradas",
-    "company": "legnofino",
-    "priority": "medium",
-    "dueDate": null,
-    "notes": "",
-    "project": "Secrets Macao",
     "status": "pending",
-    "createdAt": "2026-08-18"
+    "createdAt": "2026-06-16"
   }
 ]

@@ -736,5 +736,16 @@
     "project": "Melia Punta Bergantin",
     "status": "pending",
     "createdAt": "2026-08-18"
+  },
+  {
+    "id": "1787159711928",
+    "description": "Cuantificacion Panel Sandwich",
+    "company": "mfc",
+    "priority": "medium",
+    "dueDate": null,
+    "notes": "",
+    "project": "",
+    "status": "pending",
+    "createdAt": "2026-08-19"
   }
 ]
